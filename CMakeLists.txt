@@ -35,7 +35,7 @@ set(Slicer_ORGANIZATION_DOMAIN "mayoclinic.org")
 set(Slicer_ORGANIZATION_NAME   "Mayo Clinic")
 
 # Default home and favorite modules
-set(Slicer_DEFAULT_HOME_MODULE "Home")
+set(Slicer_DEFAULT_HOME_MODULE "QReads")
 set(Slicer_DEFAULT_FAVORITE_MODULES "Data, Volumes, Models, Transforms, Markups, SegmentEditor")
 
 # Configure SuperBuild
@@ -136,7 +136,7 @@ set(Slicer_QTSCRIPTEDMODULES_DISABLED
 set(Slicer_EXTENSION_SOURCE_DIRS
   #${SlicerQReads_SOURCE_DIR}/Modules/CLI/MyCLIModule
   #${SlicerQReads_SOURCE_DIR}/Modules/Loadable/MyLoadableModule
-  #${SlicerQReads_SOURCE_DIR}/Modules/Scripted/MyScriptedModule
+  ${SlicerQReads_SOURCE_DIR}/Modules/Scripted/QReadsHome
   )
 
 # Add remote extension source directories
