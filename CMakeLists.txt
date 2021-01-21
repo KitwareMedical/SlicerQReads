@@ -12,8 +12,8 @@ include(FetchContent)
 if(NOT DEFINED slicersources_SOURCE_DIR)
   # Download Slicer sources and set variables slicersources_SOURCE_DIR and slicersources_BINARY_DIR
   FetchContent_Populate(slicersources
-    GIT_REPOSITORY git://github.com/Slicer/Slicer
-    GIT_TAG        34d1f0ddb89cb7a427f668ca2f47d6ede8baa0de
+    GIT_REPOSITORY git://github.com/KitwareMedical/Slicer
+    GIT_TAG        1ffe24c88a7e1f506b2cacd9cef8a0ad20bbf9e1 # SlicerQReads-v4.13.0-2021-01-19-34d1f0ddb
     GIT_PROGRESS   1
     )
 else()
@@ -100,9 +100,12 @@ option(Slicer_USE_SimpleITK                     "Build application with SimpleIT
 
 option(Slicer_BUILD_BRAINSTOOLS                 "Build application with BRAINSTools module"           OFF)
 option(Slicer_BUILD_DataStore                   "Build application with DataStore module"             OFF)
-option(Slicer_BUILD_CompareVolumes              "Build application with ChangeTrackerPy module"       OFF)
+option(Slicer_BUILD_CompareVolumes              "Build application with CompareVolumes module"        OFF)
 option(Slicer_BUILD_LandmarkRegistration        "Build application with LandmarkRegistration module"  OFF)
 option(Slicer_BUILD_SurfaceToolbox              "Build application with SurfaceToolbox module"        OFF)
+
+option(Slicer_BUILD_CLI                         "Build Slicer CLI Plugins"                            OFF)
+set(Slicer_VTK_VERSION_MAJOR 9 CACHE STRING "VTK major version (8 or 9)")
 
 # Enable Slicer built-in modules
 set(Slicer_CLIMODULES_ENABLED
@@ -118,17 +121,31 @@ set(Slicer_QTSCRIPTEDMODULES_ENABLED
 set(Slicer_CLIMODULES_DISABLED
   )
 set(Slicer_QTLOADABLEMODULES_DISABLED
+  Annotations
+  CropVolume
+  Markups
+  Plots
   SceneViews
+  Sequences
+  Segmentations
   SlicerWelcome
+  Tables
+  Texts
   ViewControllers
+  VolumeRendering
   )
 set(Slicer_QTSCRIPTEDMODULES_DISABLED
+  CropVolumeSequence
   DataProbe
   DMRIInstall
+  Editor
+  EditorLib
   Endoscopy
   LabelStatistics
   PerformanceTests
   SampleData
+  SegmentEditor
+  SegmentStatistics
   VectorToScalarVolume
   )
 

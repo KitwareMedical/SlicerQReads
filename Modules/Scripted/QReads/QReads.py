@@ -3,8 +3,9 @@ import unittest
 import logging
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
-from slicer.util import VTKObservationMixin
+from slicer.util import NodeModify, VTKObservationMixin
 
+from Resources import QReadsResources
 #
 # QReads
 #
@@ -17,7 +18,7 @@ class QReads(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "QReads"  # TODO: make this more human readable by adding spaces
-    self.parent.categories = ["Examples"]  # TODO: set categories (folders where the module shows up in the module selector)
+    self.parent.categories = ["SlicerQReads"]  # TODO: set categories (folders where the module shows up in the module selector)
     self.parent.dependencies = []  # TODO: add here list of module names that this module requires
     self.parent.contributors = ["John Doe (AnyWare Corp.)"]  # TODO: replace with "Firstname Lastname (Organization)"
     # TODO: update with short description of the module and a link to online module documentation
@@ -83,17 +84,35 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     # These connections ensure that whenever user changes some settings on the GUI, that is saved in the MRML scene
     # (in the selected parameter node).
-    self.ui.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
-    self.ui.outputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
-    self.ui.imageThresholdSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
-    self.ui.invertOutputCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
-    self.ui.invertedOutputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
-
-    # Buttons
-    self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
+    #self.ui.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
+    #self.ui.outputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
+    #self.ui.imageThresholdSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
+    #self.ui.invertOutputCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
+    #self.ui.invertedOutputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
 
     # Make sure parameter node is initialized (needed for module reload)
     self.initializeParameterNode()
+
+    # Hide main window components
+    slicer.util.setApplicationLogoVisible(False)
+    slicer.util.setMenuBarsVisible(False)
+    slicer.util.setModuleHelpSectionVisible(False)
+    slicer.util.setModulePanelTitleVisible(False)
+    slicer.util.setToolbarsVisible(False)
+
+    # Layout
+    slicer.app.layoutManager().setLayout(self.logic.registerCustomLayout())
+
+    for viewName, viewColor in QReadsLogic.SLICEVIEW_BACKGROUND_COLORS.items():
+      slicer.app.layoutManager().sliceWidget(viewName).sliceController().sliceViewColor = qt.QColor(viewColor)
+      slicer.app.layoutManager().sliceWidget(viewName).sliceView().setBackgroundColor(qt.QColor(viewColor))
+
+    for viewName, viewColor in QReadsLogic.THREEDVIEW_BACKGROUND_COLORS.items():
+      with NodeModify(slicer.util.getNode("vtkMRMLViewNode%s" % viewName)) as viewNode:
+        viewNode.SetBackgroundColor(0., 0., 0.)
+        viewNode.SetBackgroundColor2(0., 0., 0.)
+        viewNode.SetBoxVisible(False)
+        viewNode.SetAxisLabelsVisible(False)
 
   def cleanup(self):
     """
@@ -140,10 +159,10 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.setParameterNode(self.logic.getParameterNode())
 
     # Select default input nodes if nothing is selected yet to save a few clicks for the user
-    if not self._parameterNode.GetNodeReference("InputVolume"):
-      firstVolumeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")
-      if firstVolumeNode:
-        self._parameterNode.SetNodeReferenceID("InputVolume", firstVolumeNode.GetID())
+    #if not self._parameterNode.GetNodeReference("InputVolume"):
+    #  firstVolumeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")
+    #  if firstVolumeNode:
+    #    self._parameterNode.SetNodeReferenceID("InputVolume", firstVolumeNode.GetID())
 
   def setParameterNode(self, inputParameterNode):
     """
@@ -179,19 +198,11 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self._updatingGUIFromParameterNode = True
 
     # Update node selectors and sliders
-    self.ui.inputSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputVolume"))
-    self.ui.outputSelector.setCurrentNode(self._parameterNode.GetNodeReference("OutputVolume"))
-    self.ui.invertedOutputSelector.setCurrentNode(self._parameterNode.GetNodeReference("OutputVolumeInverse"))
-    self.ui.imageThresholdSliderWidget.value = float(self._parameterNode.GetParameter("Threshold"))
-    self.ui.invertOutputCheckBox.checked = (self._parameterNode.GetParameter("Invert") == "true")
-
-    # Update buttons states and tooltips
-    if self._parameterNode.GetNodeReference("InputVolume") and self._parameterNode.GetNodeReference("OutputVolume"):
-      self.ui.applyButton.toolTip = "Compute output volume"
-      self.ui.applyButton.enabled = True
-    else:
-      self.ui.applyButton.toolTip = "Select input and output volume nodes"
-      self.ui.applyButton.enabled = False
+    #self.ui.inputSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputVolume"))
+    #self.ui.outputSelector.setCurrentNode(self._parameterNode.GetNodeReference("OutputVolume"))
+    #self.ui.invertedOutputSelector.setCurrentNode(self._parameterNode.GetNodeReference("OutputVolumeInverse"))
+    #self.ui.imageThresholdSliderWidget.value = float(self._parameterNode.GetParameter("Threshold"))
+    #self.ui.invertOutputCheckBox.checked = (self._parameterNode.GetParameter("Invert") == "true")
 
     # All the GUI updates are done
     self._updatingGUIFromParameterNode = False
@@ -207,34 +218,19 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     wasModified = self._parameterNode.StartModify()  # Modify all properties in a single batch
 
-    self._parameterNode.SetNodeReferenceID("InputVolume", self.ui.inputSelector.currentNodeID)
-    self._parameterNode.SetNodeReferenceID("OutputVolume", self.ui.outputSelector.currentNodeID)
-    self._parameterNode.SetParameter("Threshold", str(self.ui.imageThresholdSliderWidget.value))
-    self._parameterNode.SetParameter("Invert", "true" if self.ui.invertOutputCheckBox.checked else "false")
-    self._parameterNode.SetNodeReferenceID("OutputVolumeInverse", self.ui.invertedOutputSelector.currentNodeID)
+    #self._parameterNode.SetNodeReferenceID("InputVolume", self.ui.inputSelector.currentNodeID)
+    #self._parameterNode.SetNodeReferenceID("OutputVolume", self.ui.outputSelector.currentNodeID)
+    #self._parameterNode.SetParameter("Threshold", str(self.ui.imageThresholdSliderWidget.value))
+    #self._parameterNode.SetParameter("Invert", "true" if self.ui.invertOutputCheckBox.checked else "false")
+    #self._parameterNode.SetNodeReferenceID("OutputVolumeInverse", self.ui.invertedOutputSelector.currentNodeID)
 
     self._parameterNode.EndModify(wasModified)
 
-  def onApplyButton(self):
+  def onCloseApplicationButton(self):
     """
-    Run processing when user clicks "Apply" button.
+    Close application when user clicks "Close" button.
     """
-    try:
-
-      # Compute output
-      self.logic.process(self.ui.inputSelector.currentNode(), self.ui.outputSelector.currentNode(),
-        self.ui.imageThresholdSliderWidget.value, self.ui.invertOutputCheckBox.checked)
-
-      # Compute inverted output (if needed)
-      if self.ui.invertedOutputSelector.currentNode():
-        # If additional output volume is selected then result with inverted threshold is written there
-        self.logic.process(self.ui.inputSelector.currentNode(), self.ui.invertedOutputSelector.currentNode(),
-          self.ui.imageThresholdSliderWidget.value, not self.ui.invertOutputCheckBox.checked, showResult=False)
-
-    except Exception as e:
-      slicer.util.errorDisplay("Failed to compute results: "+str(e))
-      import traceback
-      traceback.print_exc()
+    pass
 
 
 #
@@ -251,6 +247,16 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
+  SLICEVIEW_BACKGROUND_COLORS = {
+    "Red": "#18184C",
+    "Yellow": "#512121",
+    "Green": "#104610"
+  }
+
+  THREEDVIEW_BACKGROUND_COLORS = {
+    "QReads1": "#000000",
+  }
+
   def __init__(self):
     """
     Called when the logic class is instantiated. Can be used for initializing member variables.
@@ -261,39 +267,53 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
     """
     Initialize parameter node with default settings.
     """
-    if not parameterNode.GetParameter("Threshold"):
-      parameterNode.SetParameter("Threshold", "100.0")
-    if not parameterNode.GetParameter("Invert"):
-      parameterNode.SetParameter("Invert", "false")
+    #if not parameterNode.GetParameter("Threshold"):
+    #  parameterNode.SetParameter("Threshold", "100.0")
+    #if not parameterNode.GetParameter("Invert"):
+    #  parameterNode.SetParameter("Invert", "false")
 
-  def process(self, inputVolume, outputVolume, imageThreshold, invert=False, showResult=True):
-    """
-    Run the processing algorithm.
-    Can be used without GUI widget.
-    :param inputVolume: volume to be thresholded
-    :param outputVolume: thresholding result
-    :param imageThreshold: values above/below this threshold will be set to 0
-    :param invert: if True then values above the threshold will be set to 0, otherwise values below are set to 0
-    :param showResult: show output volume in slice viewers
-    """
+  @staticmethod
+  def registerCustomLayout():
+    customLayout = (
+      "<layout type=\"vertical\">"
+      " <item>"
+      "  <layout type=\"horizontal\">"
+      "   <item>"
+      "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
+      "     <property name=\"orientation\" action=\"default\">Axial</property>"
+      "     <property name=\"viewlabel\" action=\"default\">B</property>"
+      "     <property name=\"viewcolor\" action=\"default\">{Red}</property>"
+      "    </view>"
+      "   </item>"
+      "   <item>"
+      "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\">"
+      "     <property name=\"orientation\" action=\"default\">Sagittal</property>"
+      "     <property name=\"viewlabel\" action=\"default\">R</property>"
+      "     <property name=\"viewcolor\" action=\"default\">{Yellow}</property>"
+      "    </view>"
+      "   </item>"
+      "  </layout>"
+      " </item>"
+      " <item>"
+      "  <layout type=\"horizontal\">"
+      "   <item>"
+      "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\">"
+      "     <property name=\"orientation\" action=\"default\">Coronal</property>"
+      "     <property name=\"viewlabel\" action=\"default\">G</property>"
+      "     <property name=\"viewcolor\" action=\"default\">{Green}</property>"
+      "    </view>"
+      "   </item>"
+      "   <item>"
+      "    <view class=\"vtkMRMLViewNode\" singletontag=\"QReads1\">"
+      "     <property name=\"viewlabel\" action=\"default\">1</property>"
+      "     <property name=\"viewcolor\" action=\"default\">{QReads1}</property>"
+      "    </view>"
+      "   </item>"
+      "  </layout>"
+      " </item>"
+      "</layout>").format(**QReadsLogic.SLICEVIEW_BACKGROUND_COLORS, **QReadsLogic.THREEDVIEW_BACKGROUND_COLORS)
+    customLayoutId = 503
+    layoutLogic = slicer.app.layoutManager().layoutLogic()
+    layoutLogic.GetLayoutNode().AddLayoutDescription(customLayoutId, customLayout)
+    return customLayoutId
 
-    if not inputVolume or not outputVolume:
-      raise ValueError("Input or output volume is invalid")
-
-    import time
-    startTime = time.time()
-    logging.info('Processing started')
-
-    # Compute the thresholded output volume using the "Threshold Scalar Volume" CLI module
-    cliParams = {
-      'InputVolume': inputVolume.GetID(),
-      'OutputVolume': outputVolume.GetID(),
-      'ThresholdValue' : imageThreshold,
-      'ThresholdType' : 'Above' if invert else 'Below'
-      }
-    cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True, update_display=showResult)
-    # We don't need the CLI module node anymore, remove it to not clutter the scene with it
-    slicer.mrmlScene.RemoveNode(cliNode)
-
-    stopTime = time.time()
-    logging.info('Processing completed in {0:.2f} seconds'.format(stopTime-startTime))
