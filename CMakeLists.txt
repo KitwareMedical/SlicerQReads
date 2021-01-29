@@ -136,7 +136,7 @@ set(Slicer_QTSCRIPTEDMODULES_DISABLED
 set(Slicer_EXTENSION_SOURCE_DIRS
   #${SlicerQReads_SOURCE_DIR}/Modules/CLI/MyCLIModule
   #${SlicerQReads_SOURCE_DIR}/Modules/Loadable/MyLoadableModule
-  ${SlicerQReads_SOURCE_DIR}/Modules/Scripted/QReadsHome
+  ${SlicerQReads_SOURCE_DIR}/Modules/Scripted/QReads
   )
 
 # Add remote extension source directories
