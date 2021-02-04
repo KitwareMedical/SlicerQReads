@@ -209,7 +209,10 @@ QPushButton#ResetWLButton {
       <item>
        <layout class="QGridLayout" name="gridLayout">
         <item row="1" column="3">
-         <widget class="QPushButton" name="CTBodyLungWLPresetButton">
+         <widget class="QPushButton" name="CTLungWLPresetButton">
+          <property name="toolTip">
+           <string>Set the window/level for CT Lung</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -243,7 +246,10 @@ QPushButton#ResetWLButton {
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QPushButton" name="CTBodyBoneWLPresetButton">
+         <widget class="QPushButton" name="CTBoneWLPresetButton">
+          <property name="toolTip">
+           <string>Set the window/level for CT Bone</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -261,6 +267,9 @@ QPushButton#ResetWLButton {
         </item>
         <item row="1" column="0">
          <widget class="QPushButton" name="CTBodySoftTissueWLPresetButton">
+          <property name="toolTip">
+           <string>Set the window/level for CT body soft tissue</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -317,7 +326,10 @@ QPushButton#ResetWLButton {
          </widget>
         </item>
         <item row="1" column="2">
-         <widget class="QPushButton" name="CTBodyBrainWLPresetButton">
+         <widget class="QPushButton" name="CTBrainWLPresetButton">
+          <property name="toolTip">
+           <string>Set the window/level for CT Brain</string>
+          </property>
           <property name="text">
            <string/>
           </property>

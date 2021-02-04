@@ -90,6 +90,10 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     #self.ui.invertOutputCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
     #self.ui.invertedOutputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
     self.ui.InverseGrayButton.connect("clicked(bool)", self.logic.setInverseGrayEnabled)
+    self.ui.CTBodySoftTissueWLPresetButton.connect("clicked()", lambda presetName="CT-BodySoftTissue": self.logic.setWindowLevelPreset(presetName))
+    self.ui.CTBoneWLPresetButton.connect("clicked()", lambda presetName="CT-Bone": self.logic.setWindowLevelPreset(presetName))
+    self.ui.CTBrainWLPresetButton.connect("clicked()", lambda presetName="CT-Head": self.logic.setWindowLevelPreset(presetName))
+    self.ui.CTLungWLPresetButton.connect("clicked()", lambda presetName="CT-Lung": self.logic.setWindowLevelPreset(presetName))
 
     # Make sure parameter node is initialized (needed for module reload)
     self.initializeParameterNode()
@@ -257,6 +261,14 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
     "QReads1": "#000000",
   }
 
+  WINDOW_LEVEL_PRESETS = {
+    'CT-BodySoftTissue': (1600, -600),
+    'CT-Bone': (2500, 300),
+    'CT-Head': (100, 40),
+    'CT-Lung': (400, 40)
+  }
+  """Windows level presets specified as (windows, level)"""
+
   def __init__(self):
     """
     Called when the logic class is instantiated. Can be used for initializing member variables.
@@ -324,4 +336,11 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       else:
         colorNodeID = "vtkMRMLColorTableNodeGrey"
       volumeNode.GetDisplayNode().SetAndObserveColorNodeID(slicer.util.getNode(colorNodeID).GetID())
+
+  def setWindowLevelPreset(self, presetName):
+    for volumeNode in slicer.util.getNodesByClass("vtkMRMLScalarVolumeNode"):
+      volumeDisplayNode = volumeNode.GetDisplayNode()
+      with NodeModify(volumeDisplayNode):
+        volumeDisplayNode.SetAutoWindowLevel(0)
+        volumeDisplayNode.SetWindowLevel(*self.WINDOW_LEVEL_PRESETS[presetName])
 
