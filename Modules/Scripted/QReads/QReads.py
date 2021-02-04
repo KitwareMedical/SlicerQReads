@@ -104,7 +104,6 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     slicer.app.layoutManager().setLayout(self.logic.registerCustomLayout())
 
     for viewName, viewColor in QReadsLogic.SLICEVIEW_BACKGROUND_COLORS.items():
-      slicer.app.layoutManager().sliceWidget(viewName).sliceController().sliceViewColor = qt.QColor(viewColor)
       slicer.app.layoutManager().sliceWidget(viewName).sliceView().setBackgroundColor(qt.QColor(viewColor))
 
     for viewName, viewColor in QReadsLogic.THREEDVIEW_BACKGROUND_COLORS.items():
@@ -281,15 +280,15 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       "   <item>"
       "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
       "     <property name=\"orientation\" action=\"default\">Axial</property>"
-      "     <property name=\"viewlabel\" action=\"default\">B</property>"
-      "     <property name=\"viewcolor\" action=\"default\">{Red}</property>"
+      "     <property name=\"viewlabel\" action=\"relayout\">B</property>"
+      "     <property name=\"viewcolor\" action=\"relayout\">{Red}</property>"
       "    </view>"
       "   </item>"
       "   <item>"
       "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\">"
       "     <property name=\"orientation\" action=\"default\">Sagittal</property>"
-      "     <property name=\"viewlabel\" action=\"default\">R</property>"
-      "     <property name=\"viewcolor\" action=\"default\">{Yellow}</property>"
+      "     <property name=\"viewlabel\" action=\"relayout\">R</property>"
+      "     <property name=\"viewcolor\" action=\"relayout\">{Yellow}</property>"
       "    </view>"
       "   </item>"
       "  </layout>"
@@ -299,8 +298,8 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       "   <item>"
       "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\">"
       "     <property name=\"orientation\" action=\"default\">Coronal</property>"
-      "     <property name=\"viewlabel\" action=\"default\">G</property>"
-      "     <property name=\"viewcolor\" action=\"default\">{Green}</property>"
+      "     <property name=\"viewlabel\" action=\"relayout\">G</property>"
+      "     <property name=\"viewcolor\" action=\"relayout\">{Green}</property>"
       "    </view>"
       "   </item>"
       "   <item>"
