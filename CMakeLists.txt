@@ -121,9 +121,7 @@ set(Slicer_QTSCRIPTEDMODULES_ENABLED
 set(Slicer_CLIMODULES_DISABLED
   )
 set(Slicer_QTLOADABLEMODULES_DISABLED
-  Annotations
   CropVolume
-  Markups
   Plots
   SceneViews
   Sequences
