@@ -13,7 +13,7 @@ if(NOT DEFINED slicersources_SOURCE_DIR)
   # Download Slicer sources and set variables slicersources_SOURCE_DIR and slicersources_BINARY_DIR
   FetchContent_Populate(slicersources
     GIT_REPOSITORY git://github.com/KitwareMedical/Slicer
-    GIT_TAG        1ffe24c88a7e1f506b2cacd9cef8a0ad20bbf9e1 # SlicerQReads-v4.13.0-2021-01-19-34d1f0ddb
+    GIT_TAG        a06f97b8606c65bd240044dd0cf9e0751b9259f0 # SlicerQReads-v4.13.0-2021-02-03-731be146e
     GIT_PROGRESS   1
     )
 else()
