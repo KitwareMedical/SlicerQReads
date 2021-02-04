@@ -89,6 +89,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     #self.ui.imageThresholdSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
     #self.ui.invertOutputCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
     #self.ui.invertedOutputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
+    self.ui.InverseGrayButton.connect("clicked(bool)", self.logic.setInverseGrayEnabled)
 
     # Make sure parameter node is initialized (needed for module reload)
     self.initializeParameterNode()
@@ -315,4 +316,12 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
     layoutLogic = slicer.app.layoutManager().layoutLogic()
     layoutLogic.GetLayoutNode().AddLayoutDescription(customLayoutId, customLayout)
     return customLayoutId
+
+  def setInverseGrayEnabled(self, enabled):
+    for volumeNode in slicer.util.getNodesByClass("vtkMRMLScalarVolumeNode"):
+      if enabled:
+        colorNodeID = "vtkMRMLColorTableNodeInvertedGrey"
+      else:
+        colorNodeID = "vtkMRMLColorTableNodeGrey"
+      volumeNode.GetDisplayNode().SetAndObserveColorNodeID(slicer.util.getNode(colorNodeID).GetID())
 
