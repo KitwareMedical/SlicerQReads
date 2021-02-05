@@ -90,6 +90,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     # These connections ensure that whenever user changes some settings on the GUI, that is saved in the MRML scene
     # (in the selected parameter node).
+    self.ui.ShowReferenceMarkersButton.connect("clicked()", self.updateParameterNodeFromGUI)
     self.ui.SlabButton.connect("clicked()", self.updateParameterNodeFromGUI)
     self.slabModeButtonGroup.connect("buttonClicked(int)", self.updateParameterNodeFromGUI)
     self.ui.SlabThicknessSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
@@ -211,6 +212,10 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # Make sure GUI changes do not call updateParameterNodeFromGUI (it could cause infinite loop)
     self._updatingGUIFromParameterNode = True
 
+    # Toggle reference markers button
+    referenceMarkersVisible = toBool(self._parameterNode.GetParameter("ReferenceMarkersVisible"))
+    self.ui.ShowReferenceMarkersButton.checked = referenceMarkersVisible
+
     # Enable/disable slab buttons and slider
     slabEnabled = toBool(self._parameterNode.GetParameter("SlabEnabled"))
     self.ui.SlabModeMaxRadioButton.enabled = slabEnabled
@@ -238,6 +243,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.InverseGrayButton.checked = inverseGray
 
     # Update slice viewers
+    QReadsLogic.setReferenceMarkersVisible(referenceMarkersVisible)
     QReadsLogic.setSlab(
       QReadsLogic.slabModeFromString(slabModeStr),
       QReadsLogic.slabThicknessInMmToNumberOfSlices(volumeNode, slabThicknessInMm))
@@ -256,6 +262,8 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       return
 
     wasModified = self._parameterNode.StartModify()  # Modify all properties in a single batch
+
+    self._parameterNode.SetParameter("ReferenceMarkersVisible", "true" if self.ui.ShowReferenceMarkersButton.checked else "false")
 
     slabEnabled = self.ui.SlabButton.checked
     self._parameterNode.SetParameter("SlabEnabled", "true" if slabEnabled else "false")
@@ -326,6 +334,8 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
     """
     Initialize parameter node with default settings.
     """
+    if not parameterNode.GetParameter("ReferenceMarkersVisible"):
+      parameterNode.SetParameter("ReferenceMarkersVisible", "false")
     if not parameterNode.GetParameter("SlabEnabled"):
       parameterNode.SetParameter("SlabEnabled", "false")
     if not parameterNode.GetParameter("SlabMode"):
@@ -422,4 +432,9 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       reslice.SetSlabMode(mode)
       reslice.SetSlabNumberOfSlices(numberOfSlices)
       sliceLogic.GetBackgroundLayer().Modified()
+
+  @staticmethod
+  def setReferenceMarkersVisible(visible):
+    for sliceCompositeNode in slicer.util.getNodesByClass("vtkMRMLSliceCompositeNode"):
+      sliceCompositeNode.SetSliceIntersectionVisibility(visible)
 

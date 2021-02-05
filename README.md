@@ -11,6 +11,7 @@ Slicer-based implementation of QREADS medical image viewer used at the Mayo Clin
 * Support max, min and mean thick slab reconstruction
 * Window level presets for CT of bone, head, lung and soft-tissue
 * Orientation marker in 3D and slice viewers
+* Toggle reference markers visibility
 
 ## Table of content
 
