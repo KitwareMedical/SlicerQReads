@@ -8,6 +8,7 @@ Slicer-based implementation of QREADS medical image viewer used at the Mayo Clin
 ## Features
 
 * Toggle between greyscale and inverted greyscale color tables
+* Support max, min and mean thick slab reconstruction
 
 ## Table of content
 
