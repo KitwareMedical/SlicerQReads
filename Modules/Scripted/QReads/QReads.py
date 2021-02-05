@@ -113,7 +113,9 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     slicer.app.layoutManager().setLayout(self.logic.registerCustomLayout())
 
     for viewName, viewColor in QReadsLogic.SLICEVIEW_BACKGROUND_COLORS.items():
-      slicer.app.layoutManager().sliceWidget(viewName).sliceView().setBackgroundColor(qt.QColor(viewColor))
+      sliceWidget = slicer.app.layoutManager().sliceWidget(viewName)
+      sliceWidget.sliceView().setBackgroundColor(qt.QColor(viewColor))
+      sliceWidget.mrmlSliceNode().SetOrientationMarkerType(slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes)
 
     for viewName, viewColor in QReadsLogic.THREEDVIEW_BACKGROUND_COLORS.items():
       with NodeModify(slicer.util.getNode("vtkMRMLViewNode%s" % viewName)) as viewNode:
@@ -121,6 +123,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         viewNode.SetBackgroundColor2(0., 0., 0.)
         viewNode.SetBoxVisible(False)
         viewNode.SetAxisLabelsVisible(False)
+        viewNode.SetOrientationMarkerType(slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes)
 
   def cleanup(self):
     """
