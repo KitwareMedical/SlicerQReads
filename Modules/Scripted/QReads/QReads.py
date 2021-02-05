@@ -3,7 +3,7 @@ import unittest
 import logging
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
-from slicer.util import NodeModify, VTKObservationMixin
+from slicer.util import NodeModify, toBool, VTKObservationMixin
 
 from Resources import QReadsResources
 #
@@ -54,6 +54,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.logic = None
     self._parameterNode = None
     self._updatingGUIFromParameterNode = False
+    self.slabModeButtonGroup = None
 
   def setup(self):
     """
@@ -66,6 +67,10 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     uiWidget = slicer.util.loadUI(self.resourcePath('UI/QReads.ui'))
     self.layout.addWidget(uiWidget)
     self.ui = slicer.util.childWidgetVariables(uiWidget)
+    self.slabModeButtonGroup = qt.QButtonGroup()
+    self.slabModeButtonGroup.addButton(self.ui.SlabModeMaxRadioButton, vtk.VTK_IMAGE_SLAB_MAX)
+    self.slabModeButtonGroup.addButton(self.ui.SlabModeMeanRadioButton, vtk.VTK_IMAGE_SLAB_MEAN)
+    self.slabModeButtonGroup.addButton(self.ui.SlabModeMinRadioButton, vtk.VTK_IMAGE_SLAB_MIN)
 
     # Set scene in MRML widgets. Make sure that in Qt designer the top-level qMRMLWidget's
     # "mrmlSceneChanged(vtkMRMLScene*)" signal in is connected to each MRML widget's.
@@ -81,9 +86,13 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # These connections ensure that we update parameter node when scene is closed
     self.addObserver(slicer.mrmlScene, slicer.mrmlScene.StartCloseEvent, self.onSceneStartClose)
     self.addObserver(slicer.mrmlScene, slicer.mrmlScene.EndCloseEvent, self.onSceneEndClose)
+    self.addObserver(slicer.mrmlScene, slicer.mrmlScene.NodeAddedEvent, self.onNodeAdded)
 
     # These connections ensure that whenever user changes some settings on the GUI, that is saved in the MRML scene
     # (in the selected parameter node).
+    self.ui.SlabButton.connect("clicked()", self.updateParameterNodeFromGUI)
+    self.slabModeButtonGroup.connect("buttonClicked(int)", self.updateParameterNodeFromGUI)
+    self.ui.SlabThicknessSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
     self.ui.InverseGrayButton.connect("clicked(bool)", self.logic.setInverseGrayEnabled)
     self.ui.CTBodySoftTissueWLPresetButton.connect("clicked()", lambda presetName="CT-BodySoftTissue": self.logic.setWindowLevelPreset(presetName))
     self.ui.CTBoneWLPresetButton.connect("clicked()", lambda presetName="CT-Bone": self.logic.setWindowLevelPreset(presetName))
@@ -148,6 +157,15 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     if self.parent.isEntered:
       self.initializeParameterNode()
 
+  @vtk.calldata_type(vtk.VTK_OBJECT)
+  def onNodeAdded(self, caller, event, calldata):
+    if slicer.mrmlScene.IsBatchProcessing():
+      return
+    node = calldata
+    if not isinstance(node, slicer.vtkMRMLScalarVolumeNode):
+      return
+    self.updateParameterNodeFromVolumeNode(node)
+
   def initializeParameterNode(self):
     """
     Ensure parameter node exists and observed.
@@ -190,6 +208,32 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # Make sure GUI changes do not call updateParameterNodeFromGUI (it could cause infinite loop)
     self._updatingGUIFromParameterNode = True
 
+    # Enbable/disable slab buttons and slider
+    slabEnabled = toBool(self._parameterNode.GetParameter("SlabEnabled"))
+    self.ui.SlabModeMaxRadioButton.enabled = slabEnabled
+    self.ui.SlabModeMeanRadioButton.enabled = slabEnabled
+    self.ui.SlabModeMinRadioButton.enabled = slabEnabled
+    self.ui.SlabThicknessSliderWidget.enabled = slabEnabled
+
+    # Update slab mode buttons
+    slabModeStr = self._parameterNode.GetParameter("SlabMode") if slabEnabled else "Mean"
+    getattr(self.ui, "SlabMode%sRadioButton" % slabModeStr).checked = True
+
+    volumeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")
+
+    # Update slab slider
+    spacingInMm = max(volumeNode.GetSpacing()) if volumeNode is not None else 0.0
+    if slabEnabled:
+      slabThicknessInMm = float(self._parameterNode.GetParameter("SlabThicknessInMm"))
+    else:
+      slabThicknessInMm = spacingInMm
+    self.ui.SlabThicknessSliderWidget.minimum = spacingInMm
+    self.ui.SlabThicknessSliderWidget.value = slabThicknessInMm
+
+    # Update slice viewers
+    QReadsLogic.setSlab(
+      QReadsLogic.slabModeFromString(slabModeStr),
+      QReadsLogic.slabThicknessInMmToNumberOfSlices(volumeNode, slabThicknessInMm))
 
     # All the GUI updates are done
     self._updatingGUIFromParameterNode = False
@@ -205,8 +249,15 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     wasModified = self._parameterNode.StartModify()  # Modify all properties in a single batch
 
+    slabEnabled = self.ui.SlabButton.checked
+    self._parameterNode.SetParameter("SlabEnabled", "true" if slabEnabled else "false")
+    self._parameterNode.SetParameter("SlabMode", QReadsLogic.slabModeToString(self.slabModeButtonGroup.checkedId()))
+    self._parameterNode.SetParameter("SlabThicknessInMm", str(self.ui.SlabThicknessSliderWidget.value))
 
     self._parameterNode.EndModify(wasModified)
+
+  def updateParameterNodeFromVolumeNode(self, volumeNode):
+    self._parameterNode.SetParameter("SlabThicknessInMm", str(max(volumeNode.GetSpacing())))
 
   def onCloseApplicationButton(self):
     """
@@ -247,6 +298,14 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
   }
   """Windows level presets specified as (windows, level)"""
 
+  SLAB_MODES = {
+    vtk.VTK_IMAGE_SLAB_MAX: "Max",
+    vtk.VTK_IMAGE_SLAB_MEAN: "Mean",
+    vtk.VTK_IMAGE_SLAB_MIN: "Min",
+    vtk.VTK_IMAGE_SLAB_SUM: "Sum"
+  }
+  """Slab modes supported by vtkImageReslice"""
+
   def __init__(self):
     """
     Called when the logic class is instantiated. Can be used for initializing member variables.
@@ -257,7 +316,12 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
     """
     Initialize parameter node with default settings.
     """
-    pass
+    if not parameterNode.GetParameter("SlabEnbled"):
+      parameterNode.SetParameter("SlabEnbled", "False")
+    if not parameterNode.GetParameter("SlabMode"):
+      parameterNode.SetParameter("SlabMode", "Mean")
+    if not parameterNode.GetParameter("SlabThicknessInMm"):
+      parameterNode.SetParameter("SlabThicknessInMm", "1.0")
 
   @staticmethod
   def registerCustomLayout():
@@ -318,4 +382,29 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       with NodeModify(volumeDisplayNode):
         volumeDisplayNode.SetAutoWindowLevel(0)
         volumeDisplayNode.SetWindowLevel(*self.WINDOW_LEVEL_PRESETS[presetName])
+
+  @staticmethod
+  def slabModeToString(slabMode):
+    return QReadsLogic.SLAB_MODES[slabMode]
+
+  @staticmethod
+  def slabModeFromString(slabModeStr):
+    return {v: k for k, v in QReadsLogic.SLAB_MODES.items()}[slabModeStr]
+
+  @staticmethod
+  def slabThicknessInMmToNumberOfSlices(volumeNode, tichknessInMm):
+    if volumeNode is None:
+      return 1
+    assert tichknessInMm > 0
+    return int(tichknessInMm / max(volumeNode.GetSpacing()))
+
+  @staticmethod
+  def setSlab(mode, numberOfSlices):
+    assert numberOfSlices > 0
+    assert mode in QReadsLogic.SLAB_MODES.keys()
+    for sliceLogic in slicer.app.applicationLogic().GetSliceLogics():
+      reslice = sliceLogic.GetBackgroundLayer().GetReslice()
+      reslice.SetSlabMode(mode)
+      reslice.SetSlabNumberOfSlices(numberOfSlices)
+      sliceLogic.GetBackgroundLayer().Modified()
 
