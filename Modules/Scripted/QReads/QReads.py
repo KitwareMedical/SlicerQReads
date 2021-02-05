@@ -208,7 +208,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # Make sure GUI changes do not call updateParameterNodeFromGUI (it could cause infinite loop)
     self._updatingGUIFromParameterNode = True
 
-    # Enbable/disable slab buttons and slider
+    # Enable/disable slab buttons and slider
     slabEnabled = toBool(self._parameterNode.GetParameter("SlabEnabled"))
     self.ui.SlabModeMaxRadioButton.enabled = slabEnabled
     self.ui.SlabModeMeanRadioButton.enabled = slabEnabled
@@ -316,8 +316,8 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
     """
     Initialize parameter node with default settings.
     """
-    if not parameterNode.GetParameter("SlabEnbled"):
-      parameterNode.SetParameter("SlabEnbled", "False")
+    if not parameterNode.GetParameter("SlabEnabled"):
+      parameterNode.SetParameter("SlabEnabled", "false")
     if not parameterNode.GetParameter("SlabMode"):
       parameterNode.SetParameter("SlabMode", "Mean")
     if not parameterNode.GetParameter("SlabThicknessInMm"):
