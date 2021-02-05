@@ -93,7 +93,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.SlabButton.connect("clicked()", self.updateParameterNodeFromGUI)
     self.slabModeButtonGroup.connect("buttonClicked(int)", self.updateParameterNodeFromGUI)
     self.ui.SlabThicknessSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
-    self.ui.InverseGrayButton.connect("clicked(bool)", self.logic.setInverseGrayEnabled)
+    self.ui.InverseGrayButton.connect("clicked(bool)", self.updateParameterNodeFromGUI)
     self.ui.CTBodySoftTissueWLPresetButton.connect("clicked()", lambda presetName="CT-BodySoftTissue": self.logic.setWindowLevelPreset(presetName))
     self.ui.CTBoneWLPresetButton.connect("clicked()", lambda presetName="CT-Bone": self.logic.setWindowLevelPreset(presetName))
     self.ui.CTBrainWLPresetButton.connect("clicked()", lambda presetName="CT-Head": self.logic.setWindowLevelPreset(presetName))
@@ -230,10 +230,15 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.SlabThicknessSliderWidget.minimum = spacingInMm
     self.ui.SlabThicknessSliderWidget.value = slabThicknessInMm
 
+    # Update InverseGray button
+    inverseGray = toBool(self._parameterNode.GetParameter("InverseGray"))
+    self.ui.InverseGrayButton.checked = inverseGray
+
     # Update slice viewers
     QReadsLogic.setSlab(
       QReadsLogic.slabModeFromString(slabModeStr),
       QReadsLogic.slabThicknessInMmToNumberOfSlices(volumeNode, slabThicknessInMm))
+    QReadsLogic.setInverseGrayEnabled(inverseGray)
 
     # All the GUI updates are done
     self._updatingGUIFromParameterNode = False
@@ -253,6 +258,8 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self._parameterNode.SetParameter("SlabEnabled", "true" if slabEnabled else "false")
     self._parameterNode.SetParameter("SlabMode", QReadsLogic.slabModeToString(self.slabModeButtonGroup.checkedId()))
     self._parameterNode.SetParameter("SlabThicknessInMm", str(self.ui.SlabThicknessSliderWidget.value))
+
+    self._parameterNode.SetParameter("InverseGray", "true" if self.ui.InverseGrayButton.checked else "false")
 
     self._parameterNode.EndModify(wasModified)
 
@@ -322,6 +329,8 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       parameterNode.SetParameter("SlabMode", "Mean")
     if not parameterNode.GetParameter("SlabThicknessInMm"):
       parameterNode.SetParameter("SlabThicknessInMm", "1.0")
+    if not parameterNode.GetParameter("InverseGray"):
+      parameterNode.SetParameter("InverseGray", "false")
 
   @staticmethod
   def registerCustomLayout():
@@ -368,8 +377,11 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
     layoutLogic.GetLayoutNode().AddLayoutDescription(customLayoutId, customLayout)
     return customLayoutId
 
-  def setInverseGrayEnabled(self, enabled):
+  @staticmethod
+  def setInverseGrayEnabled(enabled):
     for volumeNode in slicer.util.getNodesByClass("vtkMRMLScalarVolumeNode"):
+      if volumeNode.GetDisplayNode() is None:
+        continue
       if enabled:
         colorNodeID = "vtkMRMLColorTableNodeInvertedGrey"
       else:
