@@ -45,6 +45,8 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
+  ZOOM_ACTIONS = ["Fit to window", "100%", "200%", "400%"]
+
   def __init__(self, parent=None):
     """
     Called when the user opens the module the first time and the widget is initialized.
@@ -71,6 +73,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.slabModeButtonGroup.addButton(self.ui.SlabModeMaxRadioButton, vtk.VTK_IMAGE_SLAB_MAX)
     self.slabModeButtonGroup.addButton(self.ui.SlabModeMeanRadioButton, vtk.VTK_IMAGE_SLAB_MEAN)
     self.slabModeButtonGroup.addButton(self.ui.SlabModeMinRadioButton, vtk.VTK_IMAGE_SLAB_MIN)
+    self.ui.ZoomComboBox.addItems(self.ZOOM_ACTIONS)
 
     # Set scene in MRML widgets. Make sure that in Qt designer the top-level qMRMLWidget's
     # "mrmlSceneChanged(vtkMRMLScene*)" signal in is connected to each MRML widget's.
