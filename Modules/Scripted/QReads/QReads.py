@@ -442,6 +442,7 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
 
   @staticmethod
   def setReferenceMarkersVisible(visible):
-    for sliceCompositeNode in slicer.util.getNodesByClass("vtkMRMLSliceCompositeNode"):
-      sliceCompositeNode.SetSliceIntersectionVisibility(visible)
+    for sliceLogic in slicer.app.applicationLogic().GetSliceLogics():
+      sliceLogic.GetSliceCompositeNode().SetSliceIntersectionVisibility(visible)
+      sliceLogic.GetSliceNode().SetWidgetVisible(visible)
 
