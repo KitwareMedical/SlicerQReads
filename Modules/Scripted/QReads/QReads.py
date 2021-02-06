@@ -45,6 +45,8 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
+  BRIGHTNESS_STEP = 100.0
+  CONTRAST_STEP = 100.0
   ZOOM_ACTIONS = ["Fit to window", "100%", "200%", "400%"]
 
   def __init__(self, parent=None):
@@ -99,10 +101,20 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.slabModeButtonGroup.connect("buttonClicked(int)", self.updateParameterNodeFromGUI)
     self.ui.SlabThicknessSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
     self.ui.InverseGrayButton.connect("clicked(bool)", self.updateParameterNodeFromGUI)
+
+    # Increasing the level will make the image darker, whereas decreasing the level value will make the image brighter
+    self.ui.BrightnessUpButton.connect("clicked()", lambda step=-self.BRIGHTNESS_STEP: QReadsLogic.updateWindowLevel(levelStep=step))
+    self.ui.BrightnessDownButton.connect("clicked()", lambda step=self.BRIGHTNESS_STEP: QReadsLogic.updateWindowLevel(levelStep=step))
+
+    # Increasing window will reduce display contrast, whereas decreasing the window increases the brightness
+    self.ui.ContrastUpButton.connect("clicked()", lambda step=-self.CONTRAST_STEP: QReadsLogic.updateWindowLevel(windowStep=step))
+    self.ui.ContrastDownButton.connect("clicked()", lambda step=self.CONTRAST_STEP: QReadsLogic.updateWindowLevel(windowStep=step))
+
     self.ui.CTBodySoftTissueWLPresetButton.connect("clicked()", lambda presetName="CT-BodySoftTissue": self.logic.setWindowLevelPreset(presetName))
     self.ui.CTBoneWLPresetButton.connect("clicked()", lambda presetName="CT-Bone": self.logic.setWindowLevelPreset(presetName))
     self.ui.CTBrainWLPresetButton.connect("clicked()", lambda presetName="CT-Head": self.logic.setWindowLevelPreset(presetName))
     self.ui.CTLungWLPresetButton.connect("clicked()", lambda presetName="CT-Lung": self.logic.setWindowLevelPreset(presetName))
+
     self.ui.CloseApplicationPushButton.connect("clicked()", slicer.util.quit)
 
     # Make sure parameter node is initialized (needed for module reload)
@@ -419,6 +431,23 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       with NodeModify(volumeDisplayNode):
         volumeDisplayNode.SetAutoWindowLevel(0)
         volumeDisplayNode.SetWindowLevel(*self.WINDOW_LEVEL_PRESETS[presetName])
+
+  @staticmethod
+  def updateWindowLevel(windowStep=None, levelStep=None):
+    for volumeNode in slicer.util.getNodesByClass("vtkMRMLScalarVolumeNode"):
+      volumeDisplayNode = volumeNode.GetDisplayNode()
+      with NodeModify(volumeDisplayNode):
+
+        window = volumeDisplayNode.GetWindow()
+        if windowStep is not None:
+          window = window + windowStep
+
+        level = volumeDisplayNode.GetLevel()
+        if levelStep is not None:
+          level = level + levelStep
+
+        volumeDisplayNode.SetAutoWindowLevel(0)
+        volumeDisplayNode.SetWindowLevel(window, level)
 
   @staticmethod
   def slabModeToString(slabMode):
