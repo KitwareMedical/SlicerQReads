@@ -103,6 +103,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.CTBoneWLPresetButton.connect("clicked()", lambda presetName="CT-Bone": self.logic.setWindowLevelPreset(presetName))
     self.ui.CTBrainWLPresetButton.connect("clicked()", lambda presetName="CT-Head": self.logic.setWindowLevelPreset(presetName))
     self.ui.CTLungWLPresetButton.connect("clicked()", lambda presetName="CT-Lung": self.logic.setWindowLevelPreset(presetName))
+    self.ui.CloseApplicationPushButton.connect("clicked()", slicer.util.quit)
 
     # Make sure parameter node is initialized (needed for module reload)
     self.initializeParameterNode()
