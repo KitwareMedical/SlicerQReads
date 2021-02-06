@@ -12,6 +12,7 @@ Slicer-based implementation of QREADS medical image viewer used at the Mayo Clin
 * Window level presets for CT of bone, head, lung and soft-tissue
 * Orientation marker in 3D and slice viewers
 * Toggle reference markers visibility
+* Support increasing or decreasing the brightness or contrast
 
 ## Table of content
 
