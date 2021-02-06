@@ -171,7 +171,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     if not isinstance(node, slicer.vtkMRMLScalarVolumeNode):
       return
     self.updateParameterNodeFromVolumeNode(node)
-    qt.QTimer.singleShot(500, self.resetFocalPoint)
+    qt.QTimer.singleShot(750, self.resetFocalPoint)
 
   def resetFocalPoint(self):
     slicer.app.processEvents()
