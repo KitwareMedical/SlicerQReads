@@ -91,6 +91,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # These connections ensure that whenever user changes some settings on the GUI, that is saved in the MRML scene
     # (in the selected parameter node).
     self.ui.ShowReferenceMarkersButton.connect("clicked()", self.updateParameterNodeFromGUI)
+    self.ui.ResetReferenceMarkersButton.connect("clicked()", QReadsLogic.resetReferenceMarkers)
     self.ui.SlabButton.connect("clicked()", self.updateParameterNodeFromGUI)
     self.slabModeButtonGroup.connect("buttonClicked(int)", self.updateParameterNodeFromGUI)
     self.ui.SlabThicknessSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
@@ -446,3 +447,9 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       sliceLogic.GetSliceCompositeNode().SetSliceIntersectionVisibility(visible)
       sliceLogic.GetSliceNode().SetWidgetVisible(visible)
 
+  @staticmethod
+  def resetReferenceMarkers():
+    for sliceLogic in slicer.app.applicationLogic().GetSliceLogics():
+      sliceLogic.GetSliceNode().SetOrientationToDefault()
+      sliceLogic.RotateSliceToLowestVolumeAxes()
+      sliceLogic.FitSliceToAll()
