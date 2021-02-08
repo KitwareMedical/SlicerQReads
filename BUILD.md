@@ -2,7 +2,7 @@ Build and Package SlicerQReads
 ==============================
 
 This document summarizes how to build and package SlicerQReads on Windows. Instructions for Linux and macOS are similar.
-For more details, see [3D Slicer Developer Wiki](http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers)
+For more details, see [3D Slicer Developer Guide on readthedocs](https://slicer.readthedocs.io/en/latest/developer_guide/index.html)
 
 Prerequisites 
 -------------
