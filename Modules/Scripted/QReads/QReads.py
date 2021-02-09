@@ -47,7 +47,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   BRIGHTNESS_STEP = 100.0
   CONTRAST_STEP = 100.0
-  ZOOM_ACTIONS = ["Fit to window", "100%", "200%", "400%"]
+  ZOOM_ACTIONS = ["100%", "200%", "400%", "1:1", "Fit to window"]
 
   def __init__(self, parent=None):
     """
@@ -114,6 +114,8 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.CTBoneWLPresetButton.connect("clicked()", lambda presetName="CT-Bone": self.logic.setWindowLevelPreset(presetName))
     self.ui.CTBrainWLPresetButton.connect("clicked()", lambda presetName="CT-Head": self.logic.setWindowLevelPreset(presetName))
     self.ui.CTLungWLPresetButton.connect("clicked()", lambda presetName="CT-Lung": self.logic.setWindowLevelPreset(presetName))
+
+    self.ui.ZoomComboBox.connect("currentTextChanged(QString)", self.updateParameterNodeFromGUI)
 
     self.ui.CloseApplicationPushButton.connect("clicked()", slicer.util.quit)
 
@@ -188,11 +190,14 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     if not isinstance(node, slicer.vtkMRMLScalarVolumeNode):
       return
     self.updateParameterNodeFromVolumeNode(node)
-    qt.QTimer.singleShot(750, self.resetThreeDViews)
 
-  def resetThreeDViews(self):
-    slicer.app.processEvents()
-    slicer.app.layoutManager().resetThreeDViews()
+    def _update():
+      slicer.app.processEvents()
+      slicer.app.layoutManager().resetThreeDViews()
+      QReadsLogic.setZoom(self._parameterNode.GetParameter("Zoom"))
+
+    # Delay update to ensure images are rendered
+    qt.QTimer.singleShot(750, _update)
 
   def initializeParameterNode(self):
     """
@@ -266,12 +271,16 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     inverseGray = toBool(self._parameterNode.GetParameter("InverseGray"))
     self.ui.InverseGrayButton.checked = inverseGray
 
+    zoom = self._parameterNode.GetParameter("Zoom")
+    self.ui.ZoomComboBox.currentText = zoom
+
     # Update slice viewers
     QReadsLogic.setReferenceMarkersVisible(referenceMarkersVisible)
     QReadsLogic.setSlab(
       QReadsLogic.slabModeFromString(slabModeStr),
       QReadsLogic.slabThicknessInMmToNumberOfSlices(volumeNode, slabThicknessInMm))
     QReadsLogic.setInverseGrayEnabled(inverseGray)
+    QReadsLogic.setZoom(zoom)
 
     # All the GUI updates are done
     self._updatingGUIFromParameterNode = False
@@ -295,6 +304,8 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self._parameterNode.SetParameter("SlabThicknessInMm", str(self.ui.SlabThicknessSliderWidget.value))
 
     self._parameterNode.SetParameter("InverseGray", "true" if self.ui.InverseGrayButton.checked else "false")
+
+    self._parameterNode.SetParameter("Zoom", self.ui.ZoomComboBox.currentText)
 
     self._parameterNode.EndModify(wasModified)
 
@@ -368,6 +379,8 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       parameterNode.SetParameter("SlabThicknessInMm", "1.0")
     if not parameterNode.GetParameter("InverseGray"):
       parameterNode.SetParameter("InverseGray", "false")
+    if not parameterNode.GetParameter("Zoom"):
+      parameterNode.SetParameter("Zoom", "Fit to window")
 
   @staticmethod
   def registerCustomLayout():
@@ -486,3 +499,74 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       sliceLogic.GetSliceNode().SetOrientationToDefault()
       sliceLogic.RotateSliceToLowestVolumeAxes()
       sliceLogic.FitSliceToAll()
+
+  @staticmethod
+  def setZoom(zoom):
+    volumeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")
+    if zoom == "Fit to window" or zoom == "100%":
+      for sliceLogic in slicer.app.applicationLogic().GetSliceLogics():
+        sliceLogic.FitSliceToAll()
+    elif zoom == "200%":
+      QReadsLogic.setSlicesZoom(0.5)
+    elif zoom == "400%":
+      QReadsLogic.setSlicesZoom(0.25)
+    elif zoom == "1:1":
+      QReadsLogic.setSlicesZoomOneToOne(volumeNode)
+
+  @staticmethod
+  def setSlicesZoom(factor):
+    for sliceLogic in slicer.app.applicationLogic().GetSliceLogics():
+      sliceNode = sliceLogic.GetSliceNode()
+      with NodeModify(sliceNode):
+        sliceLogic.FitSliceToAll()
+        fov = sliceNode.GetFieldOfView()
+        sliceNode.SetFieldOfView(fov[0] * factor, fov[1] * factor, fov[2])
+
+  @staticmethod
+  def setSlicesZoomOneToOne(volumeNode):
+    """1:1 means image 1 image pixel to 1 screen pixel.
+
+    This means 512 by 512 image occupies 512 by 512 screen pixels.
+    """
+    for sliceLogic in slicer.app.applicationLogic().GetSliceLogics():
+      sliceNode = sliceLogic.GetSliceNode()
+      with NodeModify(sliceNode):
+        QReadsLogic.setSliceZoomOneToOne(sliceLogic, volumeNode)
+        QReadsLogic.centerSlice(sliceLogic, volumeNode)
+        sliceLogic.SnapSliceOffsetToIJK()
+
+  @staticmethod
+  def setSliceZoomOneToOne(sliceLogic, volumeNode):
+    """1:1 means image 1 image pixel to 1 screen pixel.
+
+    This means 512 by 512 image occupies 512 by 512 screen pixels.
+    """
+    sliceNode = sliceLogic.GetSliceNode()
+
+    dimensions = sliceNode.GetDimensions()
+    spacing = volumeNode.GetSpacing()
+
+    fovX = dimensions[0] * spacing[0]
+    fovY = dimensions[1] * spacing[1]
+    fovZ = sliceLogic.GetVolumeSliceSpacing(volumeNode)[2] * dimensions[2]
+    sliceNode.SetFieldOfView(fovX, fovY, fovZ)
+
+  @staticmethod
+  def centerSlice(sliceLogic, volumeNode):
+    """Set the origin to be the center of the volume in RAS.
+
+    Copied from vtkMRMLSliceLogic::FitSliceToVolume
+    """
+    rasDimensions = [0.0, 0.0, 0.0]
+    rasCenter = [0.0, 0.0, 0.0]
+    slicerLogic = sliceLogic.GetVolumeRASBox(volumeNode, rasDimensions, rasCenter)
+
+    sliceNode = sliceLogic.GetSliceNode()
+
+    sliceToRAS = vtk.vtkMatrix4x4()
+    sliceToRAS.DeepCopy(sliceNode.GetSliceToRAS())
+    sliceToRAS.SetElement(0, 3, rasCenter[0])
+    sliceToRAS.SetElement(1, 3, rasCenter[1])
+    sliceToRAS.SetElement(2, 3, rasCenter[2])
+    sliceNode.GetSliceToRAS().DeepCopy(sliceToRAS)
+    sliceNode.SetSliceOrigin(0, 0, 0)

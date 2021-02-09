@@ -13,6 +13,7 @@ Slicer-based implementation of QREADS medical image viewer used at the Mayo Clin
 * Orientation marker in 3D and slice viewers
 * Toggle reference markers visibility
 * Support increasing or decreasing the brightness or contrast
+* Zoom presets `100%`, `200%`, `400%`, `1:1` and `Fit to window`
 
 ## Table of content
 
