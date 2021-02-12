@@ -6,8 +6,6 @@ to integrate with the QREADS workflow.
 
 _This project is in active development, is not FDA approved and is not officially endorsed by the Mayo Clinic_
 
-![SlicerQReads](Applications/SlicerQReadsApp/Resources/Images/LogoFull.png?raw=true)
-
 ## Features
 
 * Toggle between greyscale and inverted greyscale color tables
