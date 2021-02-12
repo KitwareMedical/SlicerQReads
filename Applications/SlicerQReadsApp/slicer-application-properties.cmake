@@ -14,7 +14,8 @@ set(VERSION_PATCH
   )
 
 set(DESCRIPTION_SUMMARY
-  "Slicer-based implementation of QREADS medical image viewer used at the Mayo Clinic"
+  "Slicer-based implementation of 3D medical image viewer evaluvated by the Mayo Clinic
+to integrate with the QREADS workflow"
   )
 set(DESCRIPTION_FILE
   ${Slicer_SOURCE_DIR}/README.txt
