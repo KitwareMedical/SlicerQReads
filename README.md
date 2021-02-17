@@ -1,7 +1,7 @@
 SlicerQReads
 ============
 
-Slicer-based implementation of 3D medical image viewer evaluvated by the Mayo Clinic
+Slicer-based implementation of 3D medical image viewer evaluated by the Mayo Clinic
 to integrate with the QREADS workflow.
 
 _This project is in active development, is not FDA approved and is not officially endorsed by the Mayo Clinic_
