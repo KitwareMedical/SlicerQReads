@@ -49,6 +49,13 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   CONTRAST_STEP = 100.0
   ZOOM_ACTIONS = ["100%", "200%", "400%", "1:1", "Fit to window"]
 
+  class CloseApplicationEventFilter(qt.QWidget):
+    def eventFilter(self, object, event):
+      if event.type() == qt.QEvent.Close:
+        event.accept()
+        return True
+      return False
+
   def __init__(self, parent=None):
     """
     Called when the user opens the module the first time and the widget is initialized.
@@ -59,6 +66,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self._parameterNode = None
     self._updatingGUIFromParameterNode = False
     self.slabModeButtonGroup = None
+    self._closeApplicationEventFilter = QReadsWidget.CloseApplicationEventFilter()
 
   def setup(self):
     """
@@ -101,6 +109,9 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.slabModeButtonGroup.connect("buttonClicked(int)", self.updateParameterNodeFromGUI)
     self.ui.SlabThicknessSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
     self.ui.InverseGrayButton.connect("clicked(bool)", self.updateParameterNodeFromGUI)
+
+    # Install event filters
+    slicer.util.mainWindow().installEventFilter(self._closeApplicationEventFilter)
 
     # Increasing the level will make the image darker, whereas decreasing the level value will make the image brighter
     self.ui.BrightnessUpButton.connect("clicked()", lambda step=-self.BRIGHTNESS_STEP: QReadsLogic.updateWindowLevel(levelStep=step))
