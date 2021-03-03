@@ -109,6 +109,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.slabModeButtonGroup.connect("buttonClicked(int)", self.updateParameterNodeFromGUI)
     self.ui.SlabThicknessSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
     self.ui.InverseGrayButton.connect("clicked(bool)", self.updateParameterNodeFromGUI)
+    self.ui.EnableWLButton.connect("clicked(bool)", self.updateParameterNodeFromGUI)
 
     # Install event filters
     slicer.util.mainWindow().installEventFilter(self._closeApplicationEventFilter)
@@ -290,6 +291,13 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     inverseGray = toBool(self._parameterNode.GetParameter("InverseGray"))
     self.ui.InverseGrayButton.checked = inverseGray
 
+    # Update WindowLevel button
+    windowLevel = toBool(self._parameterNode.GetParameter("WindowLevelEnabled"))
+    self.ui.EnableWLButton.checked = windowLevel
+    interactionMode = slicer.vtkMRMLInteractionNode.AdjustWindowLevel if windowLevel else slicer.vtkMRMLInteractionNode.ViewTransform
+    slicer.app.applicationLogic().GetInteractionNode().SetCurrentInteractionMode(interactionMode)
+
+    # Update ZoomComboBox
     zoom = self._parameterNode.GetParameter("Zoom")
     self.ui.ZoomComboBox.currentText = zoom
 
@@ -323,6 +331,8 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self._parameterNode.SetParameter("SlabThicknessInMm", str(self.ui.SlabThicknessSliderWidget.value))
 
     self._parameterNode.SetParameter("InverseGray", "true" if self.ui.InverseGrayButton.checked else "false")
+
+    self._parameterNode.SetParameter("WindowLevelEnabled", "true" if self.ui.EnableWLButton.checked else "false")
 
     self._parameterNode.SetParameter("Zoom", self.ui.ZoomComboBox.currentText)
 
