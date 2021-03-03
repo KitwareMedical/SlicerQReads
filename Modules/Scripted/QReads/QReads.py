@@ -380,7 +380,7 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
   }
   """Windows level presets specified as (windows, level)"""
 
-  DEFAULT_SLAB_MODE = "Mean"
+  DEFAULT_SLAB_MODE = "Max"
 
   SLAB_MODES = {
     vtk.VTK_IMAGE_SLAB_MAX: "Max",
