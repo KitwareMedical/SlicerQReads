@@ -408,6 +408,8 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       parameterNode.SetParameter("SlabThicknessInMm", "1.0")
     if not parameterNode.GetParameter("InverseGray"):
       parameterNode.SetParameter("InverseGray", "false")
+    if not parameterNode.GetParameter("WindowLevelEnabled"):
+      parameterNode.SetParameter("WindowLevelEnabled", "false")
     if not parameterNode.GetParameter("Zoom"):
       parameterNode.SetParameter("Zoom", "Fit to window")
 
