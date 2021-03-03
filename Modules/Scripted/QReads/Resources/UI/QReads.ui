@@ -322,6 +322,26 @@ QPushButton#ResetWLButton {
           </property>
          </widget>
         </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="EnableWLButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../QReads.qrc">
+            <normaloff>:/Icons/MouseWindowLevelMode.png</normaloff>:/Icons/MouseWindowLevelMode.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>48</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="2">
          <widget class="QPushButton" name="CTBrainWLPresetButton">
           <property name="toolTip">
@@ -359,7 +379,7 @@ QPushButton#ResetWLButton {
           </property>
          </widget>
         </item>
-        <item row="2" column="1" colspan="3">
+        <item row="2" column="2" colspan="2">
          <widget class="QPushButton" name="ResetWLButton">
           <property name="toolTip">
            <string>Reset the Window/Level to initial DICOM header value</string>
