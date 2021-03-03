@@ -149,6 +149,14 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       sliceNode = sliceWidget.mrmlSliceNode()
       sliceNode.SetOrientationMarkerType(slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes)
       sliceNode.SetSliceVisible(True);
+      # Set text color of SliceOffsetSlider spinbox by updating palette
+      # because the background color is already customized by updating
+      # the palette in "qMRMLSliceControllerWidgetPrivate::setColor()"
+      sliceBarWidget = slicer.util.findChild(sliceWidget, "BarWidget")
+      sliceOffsetSpinBox = slicer.util.findChild(sliceBarWidget, "SpinBox")
+      palette = sliceOffsetSpinBox.palette
+      palette.setColor(qt.QPalette.Text, qt.QColor("White"))
+      sliceOffsetSpinBox.palette = palette
 
     for viewName, viewColor in QReadsLogic.THREEDVIEW_BACKGROUND_COLORS.items():
       with NodeModify(slicer.util.getNode("vtkMRMLViewNode%s" % viewName)) as viewNode:
