@@ -273,7 +273,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.SlabThicknessSliderWidget.enabled = slabEnabled
 
     # Update slab mode buttons
-    slabModeStr = self._parameterNode.GetParameter("SlabMode") if slabEnabled else "Mean"
+    slabModeStr = self._parameterNode.GetParameter("SlabMode") if slabEnabled else QReadsLogic.DEFAULT_SLAB_MODE
     getattr(self.ui, "SlabMode%sRadioButton" % slabModeStr).checked = True
 
     volumeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")
@@ -380,6 +380,8 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
   }
   """Windows level presets specified as (windows, level)"""
 
+  DEFAULT_SLAB_MODE = "Mean"
+
   SLAB_MODES = {
     vtk.VTK_IMAGE_SLAB_MAX: "Max",
     vtk.VTK_IMAGE_SLAB_MEAN: "Mean",
@@ -403,7 +405,7 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
     if not parameterNode.GetParameter("SlabEnabled"):
       parameterNode.SetParameter("SlabEnabled", "false")
     if not parameterNode.GetParameter("SlabMode"):
-      parameterNode.SetParameter("SlabMode", "Mean")
+      parameterNode.SetParameter("SlabMode", QReadsLogic.DEFAULT_SLAB_MODE)
     if not parameterNode.GetParameter("SlabThicknessInMm"):
       parameterNode.SetParameter("SlabThicknessInMm", "1.0")
     if not parameterNode.GetParameter("InverseGray"):
