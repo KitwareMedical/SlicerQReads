@@ -19,7 +19,7 @@ class QReads(ScriptedLoadableModule):
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "QReads"  # TODO: make this more human readable by adding spaces
     self.parent.categories = ["SlicerQReads"]  # TODO: set categories (folders where the module shows up in the module selector)
-    self.parent.dependencies = []  # TODO: add here list of module names that this module requires
+    self.parent.dependencies = ["DICOM"]  # TODO: add here list of module names that this module requires
     self.parent.contributors = ["John Doe (AnyWare Corp.)"]  # TODO: replace with "Firstname Lastname (Organization)"
     # TODO: update with short description of the module and a link to online module documentation
     self.parent.helpText = """
@@ -603,3 +603,17 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
     sliceToRAS.SetElement(2, 3, rasCenter[2])
     sliceNode.GetSliceToRAS().DeepCopy(sliceToRAS)
     sliceNode.SetSliceOrigin(0, 0, 0)
+
+  @staticmethod
+  def loadDICOMDataDirectory(dicomDataDir):
+    from DICOMLib import DICOMUtils
+
+    loadedNodeIDs = []  # this list will contain the list of all loaded node IDs
+
+    with DICOMUtils.TemporaryDICOMDatabase() as db:
+      DICOMUtils.importDicom(dicomDataDir, db)
+      patientUIDs = db.patients()
+      for patientUID in patientUIDs:
+        loadedNodeIDs.extend(DICOMUtils.loadPatientByUID(patientUID))
+
+    return loadedNodeIDs

@@ -25,16 +25,10 @@ _This project is in active development, is not FDA approved and is not officiall
 
 ## Command-line arguments
 
-To load a DICOM series given a file in the series:
-
-```
-SlicerQReads.exe --python-code "slicer.util.loadVolume('C:/path/to/DICOM/0.dcm', {'singleFile': False})"
-```
-
 To load a DICOM series given a folder:
 
 ```
-SlicerQReads.exe --python-code "folder='C:/path/to/DICOM'; import os; slicer.util.loadVolume(folder + '/' + os.listdir(folder)[0], {'singleFile': False})"
+SlicerQReads.exe --python-code "from QReads import QReadsLogic; QReadsLogic.loadDICOMDataDirectory('C:/path/to/DICOM')"
 ```
 
 ## Maintainers
