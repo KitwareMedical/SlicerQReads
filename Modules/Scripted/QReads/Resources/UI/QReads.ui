@@ -27,7 +27,7 @@ QFrame[frameShape=&quot;4&quot;] {
 }
 
 QFrame#ImageGroupFrame, QFrame#ToolsGroupFrame {
-  border: 10px solid gray;
+  border: 6px solid gray;
   background-color: #EEEEEE;
 }
 
@@ -64,7 +64,6 @@ QPushButton#ResetReferenceMarkersButton
 {
   background-color: #EEEEEE;
   border: 1px solid black;
-  border-radius: 5px;
 }
 QPushButton#SlabButton:checked,
 QPushButton#ShowReferenceMarkersButton:checked,
@@ -285,9 +284,6 @@ QPushButton#ResetWLButton {
             <width>48</width>
             <height>32</height>
            </size>
-          </property>
-          <property name="flat">
-           <bool>false</bool>
           </property>
          </widget>
         </item>
