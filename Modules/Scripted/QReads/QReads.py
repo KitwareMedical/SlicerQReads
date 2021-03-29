@@ -406,7 +406,7 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
     Initialize parameter node with default settings.
     """
     if not parameterNode.GetParameter("ReferenceMarkersVisible"):
-      parameterNode.SetParameter("ReferenceMarkersVisible", "false")
+      parameterNode.SetParameter("ReferenceMarkersVisible", "true")
     if not parameterNode.GetParameter("SlabEnabled"):
       parameterNode.SetParameter("SlabEnabled", "false")
     if not parameterNode.GetParameter("SlabMode"):
