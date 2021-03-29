@@ -221,6 +221,19 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       slicer.app.layoutManager().resetThreeDViews()
       QReadsLogic.setZoom(self._parameterNode.GetParameter("Zoom"))
 
+      tags = {
+        "0010,0010": "PatientName",
+        "0010,0020": "PatientID",
+        "0008,1030": "StudyDescription",
+        "0008,103e": "SeriesDescription"
+      }
+      # Dictionary of name and values
+      values = {tags[tag]: value for tag, value in QReadsLogic.dicomTagValues(node, slicer.dicomDatabase, tags).items()}
+      # Update window title
+      slicer.util.mainWindow().windowTitle = "%s - %s" % (
+        slicer.util.mainWindow().windowTitle,
+        "{PatientName} - {PatientID} - {StudyDescription} - {SeriesDescription}".format(**values))
+
     # Delay update to ensure images are rendered
     qt.QTimer.singleShot(750, _update)
 
@@ -622,3 +635,11 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
         loadedNodeIDs.extend(DICOMUtils.loadPatientByUID(patientUID))
 
     return loadedNodeIDs
+
+  @staticmethod
+  def dicomTagValues(volumeNode, dicomDatabase, tags):
+    """Return a dictionary of DICOM tags and values associated with first instance UID associated with volumeNode
+    """
+    instanceUIDs = volumeNode.GetAttribute('DICOM.instanceUIDs').split()
+    filename = dicomDatabase.fileForInstance(instanceUIDs[0])
+    return {tag: dicomDatabase.fileValue(filename, tag) for tag in tags}
