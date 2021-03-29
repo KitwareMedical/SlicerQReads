@@ -144,8 +144,9 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # Layout
     slicer.app.layoutManager().setLayout(self.logic.registerCustomLayout())
 
-    for viewName, _ in QReadsLogic.SLICEVIEW_BACKGROUND_COLORS.items():
+    for viewName, viewColor in QReadsLogic.SLICEVIEW_BACKGROUND_COLORS.items():
       sliceWidget = slicer.app.layoutManager().sliceWidget(viewName)
+      slicer.util.findChild(sliceWidget, "frame").styleSheet = "border: 4px solid %s" % viewColor
       sliceWidget.sliceView().setBackgroundColor(qt.QColor(qt.Qt.black))
       sliceNode = sliceWidget.mrmlSliceNode()
       sliceNode.SetOrientationMarkerType(slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes)
