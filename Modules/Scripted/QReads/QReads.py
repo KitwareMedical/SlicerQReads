@@ -363,9 +363,9 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
   """
 
   SLICEVIEW_BACKGROUND_COLORS = {
-    "Red": "#18184C",
-    "Yellow": "#512121",
-    "Green": "#104610"
+    "Red": "#000099",
+    "Yellow": "#990000",
+    "Green": "#009900"
   }
 
   THREEDVIEW_BACKGROUND_COLORS = {
