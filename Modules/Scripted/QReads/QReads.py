@@ -85,6 +85,10 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.slabModeButtonGroup.addButton(self.ui.SlabModeMinRadioButton, vtk.VTK_IMAGE_SLAB_MIN)
     self.ui.ZoomComboBox.addItems(self.ZOOM_ACTIONS)
 
+    # Resize dock widget based on toolbar width
+    panelDockWidget = slicer.util.findChild(slicer.util.mainWindow(), "PanelDockWidget")
+    panelDockWidget.maximumWidth = self.ui.QReads.width
+
     # Set scene in MRML widgets. Make sure that in Qt designer the top-level qMRMLWidget's
     # "mrmlSceneChanged(vtkMRMLScene*)" signal in is connected to each MRML widget's.
     # "setMRMLScene(vtkMRMLScene*)" slot.

@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>298</width>
+    <width>226</width>
     <height>704</height>
    </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>226</width>
+    <height>16777215</height>
+   </size>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget#QReads {
