@@ -331,7 +331,7 @@ QPushButton#ResetWLButton {
           </property>
           <property name="icon">
            <iconset resource="../QReads.qrc">
-            <normaloff>:/Icons/MouseWindowLevelMode.png</normaloff>:/Icons/MouseWindowLevelMode.png</iconset>
+            <normaloff>:/Icons/WL.png</normaloff>:/Icons/WL.png</iconset>
           </property>
           <property name="iconSize">
            <size>

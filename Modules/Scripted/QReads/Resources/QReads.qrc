@@ -19,6 +19,7 @@
     <file alias="InverseGray.png">Icons/InverseGray.png</file>
     <file alias="QREADSImageGroupHeader.png">Icons/QREADSImageGroupHeader.png</file>
     <file alias="QREADSToolsGroupHeader.png">Icons/QREADSToolsGroupHeader.png</file>
+    <file alias="WL.png">Icons/WL.png</file>
     <file alias="Zoom.png">Icons/Zoom.png</file>
   </qresource>
 
