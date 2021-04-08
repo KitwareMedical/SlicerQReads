@@ -221,14 +221,9 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       slicer.app.layoutManager().resetThreeDViews()
       QReadsLogic.setZoom(self._parameterNode.GetParameter("Zoom"))
 
-      tags = {
-        "0010,0010": "PatientName",
-        "0010,0020": "PatientID",
-        "0008,1030": "StudyDescription",
-        "0008,103e": "SeriesDescription"
-      }
       # Dictionary of name and values
-      values = {tags[tag]: value for tag, value in QReadsLogic.dicomTagValues(node, slicer.dicomDatabase, tags).items()}
+      values = {QReadsLogic.DICOM_TAGS[tag]: value for tag, value in QReadsLogic.dicomTagValues(node).items()}
+
       # Update window title
       slicer.util.mainWindow().windowTitle = "%s - %s" % (
         slicer.util.mainWindow().windowTitle,
@@ -407,6 +402,17 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
     vtk.VTK_IMAGE_SLAB_SUM: "Sum"
   }
   """Slab modes supported by vtkImageReslice"""
+
+  DICOM_TAGS = {
+      "0010,0010": "PatientName",
+      "0010,0020": "PatientID",
+      "0008,1030": "StudyDescription",
+      "0008,103e": "SeriesDescription"
+    }
+  """Tags cached when loading data using QReadsLogic.loadDICOMDataDirectory()"""
+
+  DICOM_TAG_VALUES = {}
+  """Map of the first instance UID of each loaded volume to tag values specified in QReadsLogic.DICOM_TAGS"""
 
   def __init__(self):
     """
@@ -632,14 +638,25 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       DICOMUtils.importDicom(dicomDataDir, db)
       patientUIDs = db.patients()
       for patientUID in patientUIDs:
-        loadedNodeIDs.extend(DICOMUtils.loadPatientByUID(patientUID))
+        for nodeID in DICOMUtils.loadPatientByUID(patientUID):
+
+          # Retrieve tag values associated with first instance UID
+          node = slicer.mrmlScene.GetNodeByID(nodeID)
+          instanceUID = node.GetAttribute('DICOM.instanceUIDs').split()[0]
+          filename = db.fileForInstance(instanceUID)
+          QReadsLogic.DICOM_TAG_VALUES[instanceUID] = {
+            tag: db.fileValue(filename, tag) for tag in QReadsLogic.DICOM_TAGS
+          }
+
+          loadedNodeIDs.append(nodeID)
 
     return loadedNodeIDs
 
   @staticmethod
-  def dicomTagValues(volumeNode, dicomDatabase, tags):
-    """Return a dictionary of DICOM tags and values associated with first instance UID associated with volumeNode
+  def dicomTagValues(volumeNode):
+    """Return a dictionary of DICOM tags and values associated with first instance UID associated with volumeNode.
+
+    See QReadsLogic.DICOM_TAGS
     """
     instanceUIDs = volumeNode.GetAttribute('DICOM.instanceUIDs').split()
-    filename = dicomDatabase.fileForInstance(instanceUIDs[0])
-    return {tag: dicomDatabase.fileValue(filename, tag) for tag in tags}
+    return QReadsLogic.DICOM_TAG_VALUES[instanceUIDs[0]]
