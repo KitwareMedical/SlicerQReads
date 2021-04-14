@@ -21,6 +21,7 @@
     <file alias="QREADSToolsGroupHeader.png">Icons/QREADSToolsGroupHeader.png</file>
     <file alias="WL.png">Icons/WL.png</file>
     <file alias="Zoom.png">Icons/Zoom.png</file>
+    <file alias="HelpButton.png">Icons/HelpButton.png</file>
   </qresource>
 
 </RCC>

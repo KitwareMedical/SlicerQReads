@@ -77,6 +77,10 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # Load widget from .ui file (created by Qt Designer).
     # Additional widgets can be instantiated manually and added to self.layout.
     uiWidget = slicer.util.loadUI(self.resourcePath('UI/QReads.ui'))
+
+    # Create Web Widget for HelpButton press event
+    self.helpWebWidget = None
+
     self.layout.addWidget(uiWidget)
     self.ui = slicer.util.childWidgetVariables(uiWidget)
     self.slabModeButtonGroup = qt.QButtonGroup()
@@ -133,6 +137,8 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     self.ui.ZoomComboBox.connect("currentTextChanged(QString)", self.updateParameterNodeFromGUI)
 
+    self.ui.HelpButton.connect("clicked()", self.showSlicerQREADSHelp)
+
     self.ui.CloseApplicationPushButton.connect("clicked()", slicer.util.quit)
 
     # Make sure parameter node is initialized (needed for module reload)
@@ -154,7 +160,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       sliceWidget.sliceView().setBackgroundColor(qt.QColor(qt.Qt.black))
       sliceNode = sliceWidget.mrmlSliceNode()
       sliceNode.SetOrientationMarkerType(slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes)
-      sliceNode.SetSliceVisible(True);
+      sliceNode.SetSliceVisible(True)
       # Set text color of SliceOffsetSlider spinbox by updating palette
       # because the background color is already customized by updating
       # the palette in "qMRMLSliceControllerWidgetPrivate::setColor()"
@@ -260,6 +266,14 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     # Initial GUI update
     self.updateGUIFromParameterNode()
+
+  def showSlicerQREADSHelp(self):
+    """Display the help website of the application using a non-modal dialog"""
+    if self.helpWebWidget is None:
+      self.helpWebWidget = slicer.qSlicerWebWidget()
+      # TODO: Chnage to SlicerQREADS local help file link after created
+      self.helpWebWidget.url = qt.QUrl('http://www.google.com')
+    self.helpWebWidget.show()
 
   def updateGUIFromParameterNode(self, caller=None, event=None):
     """
@@ -385,10 +399,10 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
   }
 
   WINDOW_LEVEL_PRESETS = {
-    'CT-BodySoftTissue': (1600, -600),
+    'CT-BodySoftTissue': (400, 40),
     'CT-Bone': (2500, 300),
     'CT-Head': (100, 40),
-    'CT-Lung': (400, 40)
+    'CT-Lung': (1600, -600)
   }
   """Windows level presets specified as (windows, level)"""
 

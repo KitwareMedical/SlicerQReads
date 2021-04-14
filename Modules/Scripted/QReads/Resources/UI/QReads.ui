@@ -116,7 +116,7 @@ QPushButton#ResetWLButton {
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../QReads.qrc">:/Icons/QREADSImageGroupHeader.png</pixmap>
+         <pixmap>:/Icons/QREADSImageGroupHeader.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -199,7 +199,7 @@ QPushButton#ResetWLButton {
        </layout>
       </item>
       <item>
-       <widget class="ctkSliderWidget" name="SlabThicknessSliderWidget"/>
+       <widget class="ctkSliderWidget" name="SlabThicknessSliderWidget" native="true"/>
       </item>
       <item>
        <widget class="Line" name="line">
@@ -219,7 +219,7 @@ QPushButton#ResetWLButton {
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../QReads.qrc">
+           <iconset>
             <normaloff>:/Icons/CTLung.png</normaloff>:/Icons/CTLung.png</iconset>
           </property>
           <property name="iconSize">
@@ -236,7 +236,7 @@ QPushButton#ResetWLButton {
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../QReads.qrc">
+           <iconset>
             <normaloff>:/Icons/ContrastDown.png</normaloff>:/Icons/ContrastDown.png</iconset>
           </property>
           <property name="iconSize">
@@ -256,7 +256,7 @@ QPushButton#ResetWLButton {
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../QReads.qrc">
+           <iconset>
             <normaloff>:/Icons/CTBone.png</normaloff>:/Icons/CTBone.png</iconset>
           </property>
           <property name="iconSize">
@@ -276,7 +276,7 @@ QPushButton#ResetWLButton {
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../QReads.qrc">
+           <iconset>
             <normaloff>:/Icons/CTBodySoftTissue.png</normaloff>:/Icons/CTBodySoftTissue.png</iconset>
           </property>
           <property name="iconSize">
@@ -293,7 +293,7 @@ QPushButton#ResetWLButton {
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../QReads.qrc">
+           <iconset>
             <normaloff>:/Icons/BrightnessUp.png</normaloff>:/Icons/BrightnessUp.png</iconset>
           </property>
           <property name="iconSize">
@@ -310,7 +310,7 @@ QPushButton#ResetWLButton {
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../QReads.qrc">
+           <iconset>
             <normaloff>:/Icons/InverseGray.png</normaloff>:/Icons/InverseGray.png</iconset>
           </property>
           <property name="iconSize">
@@ -330,7 +330,7 @@ QPushButton#ResetWLButton {
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../QReads.qrc">
+           <iconset>
             <normaloff>:/Icons/WL.png</normaloff>:/Icons/WL.png</iconset>
           </property>
           <property name="iconSize">
@@ -353,7 +353,7 @@ QPushButton#ResetWLButton {
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../QReads.qrc">
+           <iconset>
             <normaloff>:/Icons/CTHead.png</normaloff>:/Icons/CTHead.png</iconset>
           </property>
           <property name="iconSize">
@@ -370,7 +370,7 @@ QPushButton#ResetWLButton {
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../QReads.qrc">
+           <iconset>
             <normaloff>:/Icons/ContrastUp.png</normaloff>:/Icons/ContrastUp.png</iconset>
           </property>
           <property name="iconSize">
@@ -397,7 +397,7 @@ QPushButton#ResetWLButton {
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../QReads.qrc">
+           <iconset>
             <normaloff>:/Icons/BrightnessDown.png</normaloff>:/Icons/BrightnessDown.png</iconset>
           </property>
           <property name="iconSize">
@@ -418,7 +418,7 @@ QPushButton#ResetWLButton {
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../QReads.qrc">:/Icons/Zoom.png</pixmap>
+           <pixmap>:/Icons/Zoom.png</pixmap>
           </property>
          </widget>
         </item>
@@ -467,7 +467,7 @@ QPushButton#ResetWLButton {
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../QReads.qrc">:/Icons/QREADSToolsGroupHeader.png</pixmap>
+         <pixmap>:/Icons/QREADSToolsGroupHeader.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -487,7 +487,7 @@ QPushButton#ResetWLButton {
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../QReads.qrc">
+         <iconset>
           <normaloff>:/Icons/DistanceMeasurement.png</normaloff>:/Icons/DistanceMeasurement.png</iconset>
         </property>
         <property name="iconSize">
@@ -502,6 +502,31 @@ QPushButton#ResetWLButton {
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="HelpButton">
+     <property name="font">
+      <font>
+       <family>MS Shell Dlg 2</family>
+       <pointsize>11</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Help</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../../../../../../Temp/HelpImage.png</normaloff>../../../../../../Temp/HelpImage.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
     </widget>
    </item>
    <item>
@@ -543,8 +568,6 @@ QPushButton#ResetWLButton {
    <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../QReads.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
