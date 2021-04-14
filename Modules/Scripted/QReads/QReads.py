@@ -385,10 +385,10 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
   }
 
   WINDOW_LEVEL_PRESETS = {
-    'CT-BodySoftTissue': (1600, -600),
+    'CT-BodySoftTissue': (400, 40),
     'CT-Bone': (2500, 300),
     'CT-Head': (100, 40),
-    'CT-Lung': (400, 40)
+    'CT-Lung': (1600, -600)
   }
   """Windows level presets specified as (windows, level)"""
 
