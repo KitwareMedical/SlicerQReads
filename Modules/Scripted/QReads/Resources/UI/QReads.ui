@@ -54,7 +54,9 @@ QPushButton#ResetWLButton {
   font-size: 14px;
 }
 
-QPushButton#CloseApplicationPushButton {
+QPushButton#CloseApplicationPushButton,
+QPushButton#HelpButton
+ {
   font-size: 16px;
 }
 
@@ -502,6 +504,23 @@ QPushButton#ResetWLButton {
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="HelpButton">
+     <property name="text">
+      <string>Help</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../QReads.qrc">
+       <normaloff>:/Icons/Help.png</normaloff>:/Icons/Help.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
     </widget>
    </item>
    <item>
