@@ -134,8 +134,9 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     self.ui.ZoomComboBox.connect("currentTextChanged(QString)", self.updateParameterNodeFromGUI)
 
-    self.ui.HelpButton.connect("clicked()", self.showHelp)
+    self.ui.DistanceMeasurementButton.connect("clicked()", self.createDistanceMeasurement)
 
+    self.ui.HelpButton.connect("clicked()", self.showHelp)
     self.ui.CloseApplicationPushButton.connect("clicked()", slicer.util.quit)
 
     # Make sure parameter node is initialized (needed for module reload)
@@ -297,6 +298,17 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       self.helpDialog = dialog
 
     self.helpDialog.show()
+
+  def createDistanceMeasurement(self):
+    lineNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLMarkupsLineNode")
+    lineNode.SetName("Line")
+    slicer.mrmlScene.AddNode(lineNode)
+    lineNode.UnRegister(slicer.mrmlScene)
+    slicer.modules.markups.logic().AddNewDisplayNodeForMarkupsNode(lineNode)
+
+    # Setup placement
+    slicer.modules.markups.logic().SetActiveListID(lineNode)
+    slicer.app.applicationLogic().GetInteractionNode().SwitchToSinglePlaceMode()
 
   def updateGUIFromParameterNode(self, caller=None, event=None):
     """
