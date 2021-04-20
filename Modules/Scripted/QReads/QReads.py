@@ -138,6 +138,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.ZoomComboBox.connect("currentTextChanged(QString)", self.updateParameterNodeFromGUI)
 
     self.ui.HelpButton.connect("clicked()", self.showSlicerQREADSHelp)
+    self.ui.DistanceMeasurementButton.connect("clicked()", self.createDistMeasTool)
 
     self.ui.CloseApplicationPushButton.connect("clicked()", slicer.util.quit)
 
@@ -275,6 +276,18 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       self.helpWebWidget.url = qt.QUrl('http://www.google.com')
     self.helpWebWidget.show()
 
+  def createDistMeasTool(self):
+    # Create the SlicerQREADS Orientation Marker Type
+    lineNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLMarkupsLineNode")
+    lineNode.SetName("Line")
+    slicer.mrmlScene.AddNode(lineNode)
+    slicer.modules.markups.logic().AddNewDisplayNodeForMarkupsNode(lineNode)
+
+    #setup placement
+    slicer.modules.markups.logic().SetActiveListID(lineNode)
+    interactionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLInteractionNodeSingleton")
+    interactionNode.SwitchToSinglePlaceMode()
+
   def updateGUIFromParameterNode(self, caller=None, event=None):
     """
     This method is called whenever parameter node is changed.
@@ -399,10 +412,10 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
   }
 
   WINDOW_LEVEL_PRESETS = {
-    'CT-BodySoftTissue': (400, 40),
+    'CT-BodySoftTissue': (1600, -600),
     'CT-Bone': (2500, 300),
     'CT-Head': (100, 40),
-    'CT-Lung': (1600, -600)
+    'CT-Lung': (400, 40)
   }
   """Windows level presets specified as (windows, level)"""
 
