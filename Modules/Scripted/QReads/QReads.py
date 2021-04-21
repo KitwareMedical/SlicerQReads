@@ -65,6 +65,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.logic = None
     self._parameterNode = None
     self._updatingGUIFromParameterNode = False
+    self.helpDialog = None
     self.slabModeButtonGroup = None
     self._closeApplicationEventFilter = QReadsWidget.CloseApplicationEventFilter()
 
@@ -84,9 +85,6 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.slabModeButtonGroup.addButton(self.ui.SlabModeMeanRadioButton, vtk.VTK_IMAGE_SLAB_MEAN)
     self.slabModeButtonGroup.addButton(self.ui.SlabModeMinRadioButton, vtk.VTK_IMAGE_SLAB_MIN)
     self.ui.ZoomComboBox.addItems(self.ZOOM_ACTIONS)
-
-    # Additional widgets
-    self.helpWebWidget = None
 
     # Resize dock widget based on toolbar width
     panelDockWidget = slicer.util.findChild(slicer.util.mainWindow(), "PanelDockWidget")
@@ -284,10 +282,21 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     """
     Display the help website of the application using a non-modal dialog.
     """
-    if self.helpWebWidget is None:
-      self.helpWebWidget = slicer.qSlicerWebWidget()
-      self.helpWebWidget.url = qt.QUrl("https://github.com/KitwareMedical/SlicerQReads#readme")
-    self.helpWebWidget.show()
+    if self.helpDialog is None:
+
+      dialog = qt.QDialog(slicer.util.mainWindow())
+      layout = qt.QVBoxLayout()
+      dialog.setLayout(layout)
+      webWidget = slicer.qSlicerWebWidget()
+      layout.addWidget(webWidget)
+      webWidget.url = qt.QUrl("https://github.com/KitwareMedical/SlicerQReads#readme")
+
+      # Set initial size
+      dialog.size = slicer.util.mainWindow().size * 0.70
+
+      self.helpDialog = dialog
+
+    self.helpDialog.show()
 
   def updateGUIFromParameterNode(self, caller=None, event=None):
     """
