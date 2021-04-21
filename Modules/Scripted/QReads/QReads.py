@@ -403,12 +403,6 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def updateParameterNodeFromVolumeNode(self, volumeNode):
     self._parameterNode.SetParameter("SlabThicknessInMm", str(max(volumeNode.GetSpacing())))
 
-  def onCloseApplicationButton(self):
-    """
-    Close application when user clicks "Close" button.
-    """
-    pass
-
 
 #
 # QReadsLogic
