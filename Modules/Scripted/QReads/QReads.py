@@ -115,6 +115,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.SlabThicknessSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
     self.ui.InverseGrayButton.connect("clicked(bool)", self.updateParameterNodeFromGUI)
     self.ui.EnableWLButton.connect("clicked(bool)", self.updateParameterNodeFromGUI)
+    self.ui.ResetWLButton.connect("clicked()", QReadsLogic.resetWindowLevel)
 
     # Install event filters
     slicer.util.mainWindow().installEventFilter(self._closeApplicationEventFilter)
@@ -566,6 +567,11 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
 
         volumeDisplayNode.SetAutoWindowLevel(0)
         volumeDisplayNode.SetWindowLevel(window, level)
+
+  @staticmethod
+  def resetWindowLevel():
+    for volumeNode in slicer.util.getNodesByClass("vtkMRMLScalarVolumeNode"):
+      volumeNode.GetDisplayNode().AutoWindowLevelOn()
 
   @staticmethod
   def slabModeToString(slabMode):
