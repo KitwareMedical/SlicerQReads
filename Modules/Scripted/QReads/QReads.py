@@ -150,6 +150,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     for viewName, viewColor in QReadsLogic.SLICEVIEW_BACKGROUND_COLORS.items():
       sliceWidget = slicer.app.layoutManager().sliceWidget(viewName)
+      sliceWidget.sliceController().pinButton().visible = False
       slicer.util.findChild(sliceWidget, "frame").styleSheet = "border: 4px solid %s" % viewColor
       sliceWidget.sliceView().setBackgroundColor(qt.QColor(qt.Qt.black))
       sliceNode = sliceWidget.mrmlSliceNode()
