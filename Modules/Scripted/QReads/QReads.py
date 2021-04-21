@@ -156,6 +156,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       sliceNode = sliceWidget.mrmlSliceNode()
       sliceNode.SetOrientationMarkerType(slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes)
       sliceNode.SetSliceVisible(True);
+
       # Set text color of SliceOffsetSlider spinbox by updating palette
       # because the background color is already customized by updating
       # the palette in "qMRMLSliceControllerWidgetPrivate::setColor()"
@@ -165,6 +166,9 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       palette.setColor(qt.QPalette.Text, qt.QColor("White"))
       sliceOffsetSpinBox.palette = palette
 
+      # Move slice view controller bar to the bottom
+      sliceWidget.layout().addWidget(sliceWidget.sliceController())
+
     for viewName, viewColor in QReadsLogic.THREEDVIEW_BACKGROUND_COLORS.items():
       with NodeModify(slicer.util.getNode("vtkMRMLViewNode%s" % viewName)) as viewNode:
         viewNode.SetBackgroundColor(0., 0., 0.)
@@ -172,6 +176,15 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         viewNode.SetBoxVisible(False)
         viewNode.SetAxisLabelsVisible(False)
         viewNode.SetOrientationMarkerType(slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes)
+
+        # Move 3D view controller bar to the bottom
+        threeDWidget = slicer.app.layoutManager().viewWidget(viewNode)
+        threeDWidget.layout().addWidget(threeDWidget.threeDController())
+        # ... and reconfigure behavior of the popup to appear above the controller bar
+        popupWidget = threeDWidget.findChild(ctk.ctkPopupWidget)
+        popupWidget.alignment = qt.Qt.AlignLeft | qt.Qt.AlignTop
+        popupWidget.horizontalDirection = qt.Qt.LeftToRight
+        popupWidget.verticalDirection = ctk.ctkBasePopupWidget.BottomToTop
 
   def cleanup(self):
     """
