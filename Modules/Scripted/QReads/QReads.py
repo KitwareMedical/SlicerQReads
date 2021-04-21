@@ -52,6 +52,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   class CloseApplicationEventFilter(qt.QWidget):
     def eventFilter(self, object, event):
       if event.type() == qt.QEvent.Close:
+        slicer.util.mainWindow().writeSettings()
         event.accept()
         return True
       return False
