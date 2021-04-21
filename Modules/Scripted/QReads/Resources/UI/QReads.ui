@@ -39,13 +39,13 @@ QComboBox, QPushButton {
   height: 32px;
 }
 
-QDoubleSpinBox, QPushButton, QRadioButton {
+QDoubleSpinBox, QPushButton, QRadioButton, QComboBox#ZoomComboBox {
   font-weight: bold;
 }
 
 QDoubleSpinBox,
 QPushButton#SlabButton, QPushButton#ShowReferenceMarkersButton,
-QPushButton#ResetReferenceMarkersButton,
+QPushButton#ResetReferenceMarkersButton, QComboBox#ZoomComboBox, 
 QRadioButton {
   font-size: 13px;
 }
