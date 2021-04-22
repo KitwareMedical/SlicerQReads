@@ -10,12 +10,16 @@ _This project is in active development, is not FDA approved and is not officiall
 
 * Toggle between greyscale and inverted greyscale color tables
 * Support max, min and mean thick slab reconstruction
-* Window level presets for CT of bone, head, lung and soft-tissue
-* Support updating the window level using the mouse
+* Window level:
+  * Presets for CT of bone, head, lung and soft-tissue
+  * Support updating the window level using the mouse
+  * Resonable default automatically computed on data load or when clicking on "Reset"
 * Orientation marker in 3D and slice viewers
 * Toggle reference markers visibility
 * Support increasing or decreasing the brightness or contrast
 * Zoom presets `100%`, `200%`, `400%`, `1:1` and `Fit to window`
+* Support for arbirary number of measurements
+* DICOM series information displayed in toolbar
 
 ## Table of content
 
