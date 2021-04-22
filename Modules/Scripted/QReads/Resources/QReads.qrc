@@ -18,6 +18,7 @@
     <file alias="SlicerQReads-DistanceMeasurement.png">Icons/DistanceMeasurement.png</file>
     <file alias="SlicerQReads-Help.png">Icons/Help.png</file>
     <file alias="SlicerQReads-InverseGray.png">Icons/InverseGray.png</file>
+    <file alias="SlicerQReads-OrientationMarker-Axes.png">Icons/OrientationMarker-Axes.png</file>
     <file alias="SlicerQReads-QREADSImageGroupHeader.png">Icons/QREADSImageGroupHeader.png</file>
     <file alias="SlicerQReads-QREADSToolsGroupHeader.png">Icons/QREADSToolsGroupHeader.png</file>
     <file alias="SlicerQReads-WL.png">Icons/WL.png</file>

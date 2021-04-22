@@ -138,6 +138,8 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     self.ui.DistanceMeasurementButton.connect("clicked()", self.createDistanceMeasurement)
 
+    self.ui.SwitchOrientationMarkerTypeButton.connect("clicked()", self.switchViewOrientationMarkerType)
+
     self.ui.HelpButton.connect("clicked()", self.showHelp)
     self.ui.CloseApplicationPushButton.connect("clicked()", slicer.util.quit)
 
@@ -160,7 +162,6 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       slicer.util.findChild(sliceWidget, "frame").styleSheet = "border: 4px solid %s" % viewColor
       sliceWidget.sliceView().setBackgroundColor(qt.QColor(qt.Qt.black))
       sliceNode = sliceWidget.mrmlSliceNode()
-      sliceNode.SetOrientationMarkerType(slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes)
       sliceNode.SetSliceVisible(True);
 
       # Set text color of SliceOffsetSlider spinbox by updating palette
@@ -312,6 +313,14 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     slicer.modules.markups.logic().SetActiveListID(lineNode)
     slicer.app.applicationLogic().GetInteractionNode().SwitchToSinglePlaceMode()
 
+  def switchViewOrientationMarkerType(self):
+    """Switch orientation marker type the next one based on the order defined in
+    vtkMRMLAbstractViewNode::OrientationMarkerTypeType enum.
+    """
+    currentOrientationMarkerType = int(self._parameterNode.GetParameter("OrientationMarkerType"))
+    nextOrientationMarkerType = (currentOrientationMarkerType + 1) % slicer.vtkMRMLAbstractViewNode.OrientationMarkerType_Last
+    self._parameterNode.SetParameter("OrientationMarkerType", str(nextOrientationMarkerType))
+
   def updateGUIFromParameterNode(self, caller=None, event=None):
     """
     This method is called whenever parameter node is changed.
@@ -364,13 +373,17 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     zoom = self._parameterNode.GetParameter("Zoom")
     self.ui.ZoomComboBox.currentText = zoom
 
-    # Update slice viewers
+    # Update OrientationMarkerType
+    orientationMarkerType = int(self._parameterNode.GetParameter("OrientationMarkerType"))
+
+    # Update viewers
     QReadsLogic.setReferenceMarkersVisible(referenceMarkersVisible)
     QReadsLogic.setSlab(
       QReadsLogic.slabModeFromString(slabModeStr),
       QReadsLogic.slabThicknessInMmToNumberOfSlices(volumeNode, slabThicknessInMm))
     QReadsLogic.setInverseGrayEnabled(inverseGray)
     QReadsLogic.setZoom(zoom)
+    QReadsLogic.setOrientationMarkerType(orientationMarkerType)
 
     # All the GUI updates are done
     self._updatingGUIFromParameterNode = False
@@ -398,6 +411,9 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self._parameterNode.SetParameter("WindowLevelEnabled", "true" if self.ui.EnableWLButton.checked else "false")
 
     self._parameterNode.SetParameter("Zoom", self.ui.ZoomComboBox.currentText)
+
+    self._parameterNode.SetParameter("OrientationMarkerType",
+      str(slicer.util.getNodesByClass('vtkMRMLAbstractViewNode')[0].GetOrientationMarkerType()))
 
     self._parameterNode.EndModify(wasModified)
 
@@ -482,6 +498,8 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       parameterNode.SetParameter("WindowLevelEnabled", "false")
     if not parameterNode.GetParameter("Zoom"):
       parameterNode.SetParameter("Zoom", "Fit to window")
+    if not parameterNode.GetParameter("OrientationMarkerType"):
+      parameterNode.SetParameter("OrientationMarkerType", str(slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes))
 
   @staticmethod
   def registerCustomLayout():
@@ -605,6 +623,11 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       sliceLogic.GetSliceNode().SetOrientationToDefault()
       sliceLogic.RotateSliceToLowestVolumeAxes()
       sliceLogic.FitSliceToAll()
+
+  @staticmethod
+  def setOrientationMarkerType(orientationMarkerType):
+    for viewNode in slicer.util.getNodesByClass('vtkMRMLAbstractViewNode'):
+      viewNode.SetOrientationMarkerType(orientationMarkerType)
 
   @staticmethod
   def setZoom(zoom):
