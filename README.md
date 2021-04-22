@@ -1,10 +1,10 @@
 SlicerQReads
 ============
 
-Slicer-based implementation of 3D medical image viewer evaluated by the Mayo Clinic
-to integrate with the QREADS workflow.
+Slicer-based implementation of 3D medical image viewer for multiplannar reconstruction (MPR) used in
+production by the Mayo Clinic to integrate with the QREADS workflow.
 
-_This project is in active development, is not FDA approved and is not officially endorsed by the Mayo Clinic_
+_This project is in active development and is not FDA approved_
 
 ## Features
 
