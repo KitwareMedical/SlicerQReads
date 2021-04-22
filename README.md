@@ -14,7 +14,9 @@ _This project is in active development and is not FDA approved_
   * Presets for CT of bone, head, lung and soft-tissue
   * Support updating the window level using the mouse
   * Resonable default automatically computed on data load or when clicking on "Reset"
-* Orientation marker in 3D and slice viewers
+* Orientation marker:
+  * Represented in 3D and slice viewers
+  * Support for toggling between `None`, `Cube`, `Human` and `Axes` types.
 * Toggle reference markers visibility
 * Support increasing or decreasing the brightness or contrast
 * Zoom presets `100%`, `200%`, `400%`, `1:1` and `Fit to window`
