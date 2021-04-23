@@ -486,10 +486,14 @@ QPushButton#ResetReferenceMarkersButton:disabled {
           <property name="text">
            <string/>
           </property>
+          <property name="icon">
+           <iconset resource="../QReads.qrc">
+            <normaloff>:/Icons/SlicerQReads-OrientationMarker-Axes.png</normaloff>:/Icons/OrientationMarker-Axes.png</iconset>
+          </property>
           <property name="iconSize">
            <size>
-            <width>64</width>
-            <height>64</height>
+            <width>48</width>
+            <height>32</height>
            </size>
           </property>
          </widget>
@@ -498,6 +502,16 @@ QPushButton#ResetReferenceMarkersButton:disabled {
          <widget class="QPushButton" name="RulersButton">
           <property name="text">
            <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../QReads.qrc">
+            <normaloff>:/Icons/SlicerQReads-Ruler.png</normaloff>:/Icons/SlicerQReads-Ruler.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>48</width>
+            <height>32</height>
+           </size>
           </property>
          </widget>
         </item>
