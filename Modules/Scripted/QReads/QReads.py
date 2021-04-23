@@ -87,6 +87,9 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.slabModeButtonGroup.addButton(self.ui.SlabModeMinRadioButton, vtk.VTK_IMAGE_SLAB_MIN)
     self.ui.ZoomComboBox.addItems(self.ZOOM_ACTIONS)
 
+    self.currentRulerVisible = 1
+    self.rulerSwitch = 0
+
     # Resize dock widget based on toolbar width
     panelDockWidget = slicer.util.findChild(slicer.util.mainWindow(), "PanelDockWidget")
     panelDockWidget.maximumWidth = self.ui.QReads.width
@@ -139,6 +142,8 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.DistanceMeasurementButton.connect("clicked()", self.createDistanceMeasurement)
 
     self.ui.SwitchOrientationMarkerTypeButton.connect("clicked()", self.switchViewOrientationMarkerType)
+
+    self.ui.RulersButton.connect("clicked()", self.showRuler)
 
     self.ui.HelpButton.connect("clicked()", self.showHelp)
     self.ui.CloseApplicationPushButton.connect("clicked()", slicer.util.quit)
@@ -281,6 +286,20 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     # Initial GUI update
     self.updateGUIFromParameterNode()
+
+  def showRuler(self):
+    # Create the SlicerQREADS Orientation Marker Type
+    viewNodes = slicer.util.getNodesByClass('vtkMRMLAbstractViewNode')
+
+    if self.rulerSwitch == 1:
+      for viewNode in viewNodes:
+        viewNode.SetRulerType(0)
+      self.rulerSwitch = 0
+    else:
+      for viewNode in viewNodes:
+        viewNode.SetRulerType(1)
+        viewNode.SetRulerColor(2)
+        self.rulerSwitch = 1
 
   def showHelp(self):
     """
@@ -621,7 +640,8 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
   def resetReferenceMarkers():
     for sliceLogic in slicer.app.applicationLogic().GetSliceLogics():
       sliceLogic.GetSliceNode().SetOrientationToDefault()
-      sliceLogic.RotateSliceToLowestVolumeAxes()
+      # Commenting because it causes errors
+      # sliceLogic.RotateSliceToLowestVolumeAxes()
       sliceLogic.FitSliceToAll()
 
   @staticmethod
