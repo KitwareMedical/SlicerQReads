@@ -114,7 +114,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../QReads.qrc">:/Icons/QREADSImageGroupHeader.png</pixmap>
+         <pixmap resource="../QReads.qrc">:/Icons/SlicerQReads-QREADSImageGroupHeader.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -218,7 +218,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
           </property>
           <property name="icon">
            <iconset resource="../QReads.qrc">
-            <normaloff>:/Icons/CTLung.png</normaloff>:/Icons/CTLung.png</iconset>
+            <normaloff>:/Icons/SlicerQReads-CTLung.png</normaloff>:/Icons/SlicerQReads-CTLung.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -235,7 +235,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
           </property>
           <property name="icon">
            <iconset resource="../QReads.qrc">
-            <normaloff>:/Icons/ContrastDown.png</normaloff>:/Icons/ContrastDown.png</iconset>
+            <normaloff>:/Icons/SlicerQReads-ContrastDown.png</normaloff>:/Icons/SlicerQReads-ContrastDown.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -255,7 +255,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
           </property>
           <property name="icon">
            <iconset resource="../QReads.qrc">
-            <normaloff>:/Icons/CTBone.png</normaloff>:/Icons/CTBone.png</iconset>
+            <normaloff>:/Icons/SlicerQReads-CTBone.png</normaloff>:/Icons/SlicerQReads-CTBone.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -275,7 +275,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
           </property>
           <property name="icon">
            <iconset resource="../QReads.qrc">
-            <normaloff>:/Icons/CTBodySoftTissue.png</normaloff>:/Icons/CTBodySoftTissue.png</iconset>
+            <normaloff>:/Icons/SlicerQReads-CTBodySoftTissue.png</normaloff>:/Icons/SlicerQReads-CTBodySoftTissue.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -292,7 +292,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
           </property>
           <property name="icon">
            <iconset resource="../QReads.qrc">
-            <normaloff>:/Icons/BrightnessUp.png</normaloff>:/Icons/BrightnessUp.png</iconset>
+            <normaloff>:/Icons/SlicerQReads-BrightnessUp.png</normaloff>:/Icons/SlicerQReads-BrightnessUp.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -309,7 +309,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
           </property>
           <property name="icon">
            <iconset resource="../QReads.qrc">
-            <normaloff>:/Icons/InverseGray.png</normaloff>:/Icons/InverseGray.png</iconset>
+            <normaloff>:/Icons/SlicerQReads-InverseGray.png</normaloff>:/Icons/SlicerQReads-InverseGray.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -329,7 +329,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
           </property>
           <property name="icon">
            <iconset resource="../QReads.qrc">
-            <normaloff>:/Icons/WL.png</normaloff>:/Icons/WL.png</iconset>
+            <normaloff>:/Icons/SlicerQReads-WL.png</normaloff>:/Icons/SlicerQReads-WL.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -352,7 +352,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
           </property>
           <property name="icon">
            <iconset resource="../QReads.qrc">
-            <normaloff>:/Icons/CTHead.png</normaloff>:/Icons/CTHead.png</iconset>
+            <normaloff>:/Icons/SlicerQReads-CTHead.png</normaloff>:/Icons/SlicerQReads-CTHead.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -369,7 +369,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
           </property>
           <property name="icon">
            <iconset resource="../QReads.qrc">
-            <normaloff>:/Icons/ContrastUp.png</normaloff>:/Icons/ContrastUp.png</iconset>
+            <normaloff>:/Icons/SlicerQReads-ContrastUp.png</normaloff>:/Icons/SlicerQReads-ContrastUp.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -396,7 +396,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
           </property>
           <property name="icon">
            <iconset resource="../QReads.qrc">
-            <normaloff>:/Icons/BrightnessDown.png</normaloff>:/Icons/BrightnessDown.png</iconset>
+            <normaloff>:/Icons/SlicerQReads-BrightnessDown.png</normaloff>:/Icons/SlicerQReads-BrightnessDown.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -416,7 +416,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../QReads.qrc">:/Icons/Zoom.png</pixmap>
+           <pixmap resource="../QReads.qrc">:/Icons/SlicerQReads-Zoom.png</pixmap>
           </property>
          </widget>
         </item>
@@ -465,7 +465,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../QReads.qrc">:/Icons/QREADSToolsGroupHeader.png</pixmap>
+         <pixmap resource="../QReads.qrc">:/Icons/SlicerQReads-QREADSToolsGroupHeader.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -486,7 +486,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
         </property>
         <property name="icon">
          <iconset resource="../QReads.qrc">
-          <normaloff>:/Icons/DistanceMeasurement.png</normaloff>:/Icons/DistanceMeasurement.png</iconset>
+          <normaloff>:/Icons/SlicerQReads-DistanceMeasurement.png</normaloff>:/Icons/SlicerQReads-DistanceMeasurement.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -509,7 +509,7 @@ QPushButton#ResetReferenceMarkersButton:disabled {
      </property>
      <property name="icon">
       <iconset resource="../QReads.qrc">
-       <normaloff>:/Icons/Help.png</normaloff>:/Icons/Help.png</iconset>
+       <normaloff>:/Icons/SlicerQReads-Help.png</normaloff>:/Icons/SlicerQReads-Help.png</iconset>
      </property>
      <property name="iconSize">
       <size>
