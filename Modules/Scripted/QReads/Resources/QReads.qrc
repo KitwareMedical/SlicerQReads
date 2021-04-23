@@ -7,21 +7,21 @@
 <RCC version="1.0">
 
   <qresource prefix="Icons">
-    <file alias="BrightnessDown.png">Icons/BrightnessDown.png</file>
-    <file alias="BrightnessUp.png">Icons/BrightnessUp.png</file>
-    <file alias="CTBodySoftTissue.png">Icons/CTBodySoftTissue.png</file>
-    <file alias="CTBone.png">Icons/CTBone.png</file>
-    <file alias="CTHead.png">Icons/CTHead.png</file>
-    <file alias="CTLung.png">Icons/CTLung.png</file>
-    <file alias="ContrastDown.png">Icons/ContrastDown.png</file>
-    <file alias="ContrastUp.png">Icons/ContrastUp.png</file>
-    <file alias="DistanceMeasurement.png">Icons/DistanceMeasurement.png</file>
-    <file alias="Help.png">Icons/Help.png</file>
-    <file alias="InverseGray.png">Icons/InverseGray.png</file>
-    <file alias="QREADSImageGroupHeader.png">Icons/QREADSImageGroupHeader.png</file>
-    <file alias="QREADSToolsGroupHeader.png">Icons/QREADSToolsGroupHeader.png</file>
-    <file alias="WL.png">Icons/WL.png</file>
-    <file alias="Zoom.png">Icons/Zoom.png</file>
+    <file alias="SlicerQReads-BrightnessDown.png">Icons/BrightnessDown.png</file>
+    <file alias="SlicerQReads-BrightnessUp.png">Icons/BrightnessUp.png</file>
+    <file alias="SlicerQReads-CTBodySoftTissue.png">Icons/CTBodySoftTissue.png</file>
+    <file alias="SlicerQReads-CTBone.png">Icons/CTBone.png</file>
+    <file alias="SlicerQReads-CTHead.png">Icons/CTHead.png</file>
+    <file alias="SlicerQReads-CTLung.png">Icons/CTLung.png</file>
+    <file alias="SlicerQReads-ContrastDown.png">Icons/ContrastDown.png</file>
+    <file alias="SlicerQReads-ContrastUp.png">Icons/ContrastUp.png</file>
+    <file alias="SlicerQReads-DistanceMeasurement.png">Icons/DistanceMeasurement.png</file>
+    <file alias="SlicerQReads-Help.png">Icons/Help.png</file>
+    <file alias="SlicerQReads-InverseGray.png">Icons/InverseGray.png</file>
+    <file alias="SlicerQReads-QREADSImageGroupHeader.png">Icons/QREADSImageGroupHeader.png</file>
+    <file alias="SlicerQReads-QREADSToolsGroupHeader.png">Icons/QREADSToolsGroupHeader.png</file>
+    <file alias="SlicerQReads-WL.png">Icons/WL.png</file>
+    <file alias="SlicerQReads-Zoom.png">Icons/Zoom.png</file>
   </qresource>
 
 </RCC>
