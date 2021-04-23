@@ -78,10 +78,6 @@ QPushButton#SlabButton:disabled,
 QPushButton#ShowReferenceMarkersButton:disabled,
 QPushButton#ResetReferenceMarkersButton:disabled {
   background-color: rgb(170, 170, 127);
-}
-
-QPushButton#ResetWLButton {
-  background-color: gray;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
