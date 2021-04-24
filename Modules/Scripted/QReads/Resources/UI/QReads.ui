@@ -519,9 +519,22 @@ QPushButton#ResetReferenceMarkersButton:disabled {
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QPushButton" name="RulersButton">
+         <widget class="QPushButton" name="RulerVisibleButton">
           <property name="text">
            <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../QReads.qrc">
+            <normaloff>:/Icons/SlicerQReads-Ruler.png</normaloff>:/Icons/SlicerQReads-Ruler.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>48</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
