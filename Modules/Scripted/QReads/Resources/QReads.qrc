@@ -21,6 +21,7 @@
     <file alias="SlicerQReads-OrientationMarker-Axes.png">Icons/OrientationMarker-Axes.png</file>
     <file alias="SlicerQReads-QREADSImageGroupHeader.png">Icons/QREADSImageGroupHeader.png</file>
     <file alias="SlicerQReads-QREADSToolsGroupHeader.png">Icons/QREADSToolsGroupHeader.png</file>
+    <file alias="SlicerQReads-Ruler.png">Icons/Ruler.png</file>
     <file alias="SlicerQReads-WL.png">Icons/WL.png</file>
     <file alias="SlicerQReads-Zoom.png">Icons/Zoom.png</file>
   </qresource>

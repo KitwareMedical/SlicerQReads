@@ -87,9 +87,6 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.slabModeButtonGroup.addButton(self.ui.SlabModeMinRadioButton, vtk.VTK_IMAGE_SLAB_MIN)
     self.ui.ZoomComboBox.addItems(self.ZOOM_ACTIONS)
 
-    self.currentRulerVisible = 1
-    self.rulerSwitch = 0
-
     # Resize dock widget based on toolbar width
     panelDockWidget = slicer.util.findChild(slicer.util.mainWindow(), "PanelDockWidget")
     panelDockWidget.maximumWidth = self.ui.QReads.width
@@ -143,7 +140,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     self.ui.SwitchOrientationMarkerTypeButton.connect("clicked()", self.switchViewOrientationMarkerType)
 
-    self.ui.RulersButton.connect("clicked()", self.showRuler)
+    self.ui.RulerVisibleButton.connect("clicked()", self.updateParameterNodeFromGUI)
 
     self.ui.HelpButton.connect("clicked()", self.showHelp)
     self.ui.CloseApplicationPushButton.connect("clicked()", slicer.util.quit)
@@ -287,20 +284,6 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # Initial GUI update
     self.updateGUIFromParameterNode()
 
-  def showRuler(self):
-    # Create the SlicerQREADS Orientation Marker Type
-    viewNodes = slicer.util.getNodesByClass('vtkMRMLAbstractViewNode')
-
-    if self.rulerSwitch == 1:
-      for viewNode in viewNodes:
-        viewNode.SetRulerType(0)
-      self.rulerSwitch = 0
-    else:
-      for viewNode in viewNodes:
-        viewNode.SetRulerType(1)
-        viewNode.SetRulerColor(2)
-        self.rulerSwitch = 1
-
   def showHelp(self):
     """
     Display the help website of the application using a non-modal dialog.
@@ -392,8 +375,12 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     zoom = self._parameterNode.GetParameter("Zoom")
     self.ui.ZoomComboBox.currentText = zoom
 
-    # Update OrientationMarkerType
+    # Update OrientationMarkerType button
     orientationMarkerType = int(self._parameterNode.GetParameter("OrientationMarkerType"))
+
+    # Update RulerVisible button
+    rulerVisible = toBool(self._parameterNode.GetParameter("RulerVisible"))
+    self.ui.RulerVisibleButton.checked = rulerVisible
 
     # Update viewers
     QReadsLogic.setReferenceMarkersVisible(referenceMarkersVisible)
@@ -403,6 +390,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     QReadsLogic.setInverseGrayEnabled(inverseGray)
     QReadsLogic.setZoom(zoom)
     QReadsLogic.setOrientationMarkerType(orientationMarkerType)
+    QReadsLogic.setRulerVisible(rulerVisible)
 
     # All the GUI updates are done
     self._updatingGUIFromParameterNode = False
@@ -433,6 +421,8 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     self._parameterNode.SetParameter("OrientationMarkerType",
       str(slicer.util.getNodesByClass('vtkMRMLAbstractViewNode')[0].GetOrientationMarkerType()))
+
+    self._parameterNode.SetParameter("RulerVisible", "true" if self.ui.RulerVisibleButton.checked else "false")
 
     self._parameterNode.EndModify(wasModified)
 
@@ -519,6 +509,8 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
       parameterNode.SetParameter("Zoom", "Fit to window")
     if not parameterNode.GetParameter("OrientationMarkerType"):
       parameterNode.SetParameter("OrientationMarkerType", str(slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes))
+    if not parameterNode.GetParameter("RulerVisible"):
+      parameterNode.SetParameter("RulerVisible", "false")
 
   @staticmethod
   def registerCustomLayout():
@@ -648,6 +640,13 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
   def setOrientationMarkerType(orientationMarkerType):
     for viewNode in slicer.util.getNodesByClass('vtkMRMLAbstractViewNode'):
       viewNode.SetOrientationMarkerType(orientationMarkerType)
+
+  @staticmethod
+  def setRulerVisible(visible):
+    for viewNode in slicer.util.getNodesByClass('vtkMRMLAbstractViewNode'):
+      rulerType = slicer.vtkMRMLAbstractViewNode.RulerTypeThin if visible else slicer.vtkMRMLAbstractViewNode.RulerTypeNone
+      viewNode.SetRulerType(rulerType)
+      viewNode.SetRulerColor(slicer.vtkMRMLAbstractViewNode.RulerColorYellow)
 
   @staticmethod
   def setZoom(zoom):
