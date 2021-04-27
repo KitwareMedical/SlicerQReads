@@ -249,7 +249,7 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
       # Update window title
       slicer.util.mainWindow().windowTitle = \
-        "CMRN: {PatientID}    Patient Name: {PatientName}     Study: {StudyDescription}     Series: {SeriesDescription}".format(**values)
+        "CMRN: {PatientID}    Patient Name: {PatientName}     Exam: {StudyDescription}     Series: {SeriesDescription}".format(**values)
 
     # Delay update to ensure images are rendered
     qt.QTimer.singleShot(750, _update)
