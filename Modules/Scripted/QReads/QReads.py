@@ -237,11 +237,11 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     node = calldata
     if not isinstance(node, slicer.vtkMRMLScalarVolumeNode):
       return
-    self.updateParameterNodeFromVolumeNode(node)
 
     def _update():
       slicer.app.processEvents()
       slicer.app.layoutManager().resetThreeDViews()
+      self.updateParameterNodeFromVolumeNode(node)
       QReadsLogic.setZoom(self._parameterNode.GetParameter("Zoom"))
 
       # Dictionary of name and values
