@@ -725,6 +725,15 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
 
     loadedNodeIDs = []  # this list will contain the list of all loaded node IDs
 
+    # Display a popup to let the user know DICOM import is in progress
+    slicer.app.setOverrideCursor(qt.QCursor(qt.Qt.BusyCursor))
+    importInProgressDialog = qt.QMessageBox(
+      qt.QMessageBox.Icon(qt.QMessageBox.Information),
+      "SlicerQReads", "Loading data...", qt.QMessageBox.NoButton, slicer.util.mainWindow())
+    importInProgressDialog.setStandardButtons(0)
+    importInProgressDialog.show()
+    slicer.app.processEvents()
+
     with DICOMUtils.TemporaryDICOMDatabase() as db:
       DICOMUtils.importDicom(dicomDataDir, db)
       patientUIDs = db.patients()
@@ -740,6 +749,11 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
           }
 
           loadedNodeIDs.append(nodeID)
+
+    # Hide popup dialog
+    slicer.app.restoreOverrideCursor()
+    importInProgressDialog.hide()
+    importInProgressDialog.deleteLater()
 
     return loadedNodeIDs
 
