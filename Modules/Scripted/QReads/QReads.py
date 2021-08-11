@@ -2,6 +2,7 @@ import os
 import unittest
 import logging
 import vtk, qt, ctk, slicer
+from contextlib import contextmanager
 from slicer.ScriptedLoadableModule import *
 from slicer.util import NodeModify, toBool, VTKObservationMixin
 
@@ -720,21 +721,33 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
     sliceNode.SetSliceOrigin(0, 0, 0)
 
   @staticmethod
+  @contextmanager
+  def inProgressDialog(message):
+    # Display a popup to let the user know DICOM import is in progress
+    slicer.app.setOverrideCursor(qt.QCursor(qt.Qt.BusyCursor))
+    dialog = qt.QMessageBox(
+      qt.QMessageBox.Icon(qt.QMessageBox.Information),
+      "SlicerQReads", message, qt.QMessageBox.NoButton, slicer.util.mainWindow())
+    dialog.setStandardButtons(0)
+    dialog.show()
+    slicer.app.processEvents()
+
+    try:
+      yield
+
+    finally:
+      # Hide popup dialog
+      slicer.app.restoreOverrideCursor()
+      dialog.hide()
+      dialog.deleteLater()
+
+  @staticmethod
   def loadDICOMDataDirectory(dicomDataDir):
     from DICOMLib import DICOMUtils
 
     loadedNodeIDs = []  # this list will contain the list of all loaded node IDs
 
-    # Display a popup to let the user know DICOM import is in progress
-    slicer.app.setOverrideCursor(qt.QCursor(qt.Qt.BusyCursor))
-    importInProgressDialog = qt.QMessageBox(
-      qt.QMessageBox.Icon(qt.QMessageBox.Information),
-      "SlicerQReads", "Loading data...", qt.QMessageBox.NoButton, slicer.util.mainWindow())
-    importInProgressDialog.setStandardButtons(0)
-    importInProgressDialog.show()
-    slicer.app.processEvents()
-
-    with DICOMUtils.TemporaryDICOMDatabase() as db:
+    with DICOMUtils.TemporaryDICOMDatabase() as db, QReadsLogic.inProgressDialog("Loading data..."):
       DICOMUtils.importDicom(dicomDataDir, db)
       patientUIDs = db.patients()
       for patientUID in patientUIDs:
@@ -749,11 +762,6 @@ class QReadsLogic(ScriptedLoadableModuleLogic):
           }
 
           loadedNodeIDs.append(nodeID)
-
-    # Hide popup dialog
-    slicer.app.restoreOverrideCursor()
-    importInProgressDialog.hide()
-    importInProgressDialog.deleteLater()
 
     return loadedNodeIDs
 
