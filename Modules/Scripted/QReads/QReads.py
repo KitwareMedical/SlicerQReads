@@ -87,6 +87,11 @@ class QReadsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.slabModeButtonGroup.addButton(self.ui.SlabModeMinRadioButton, vtk.VTK_IMAGE_SLAB_MIN)
     self.ui.ZoomComboBox.addItems(self.ZOOM_ACTIONS)
 
+    # Configure mainWindow
+    windowflags = slicer.util.mainWindow().windowFlags()
+    windowflags = windowflags & ~ qt.Qt.WindowMinimizeButtonHint
+    slicer.util.mainWindow().setWindowFlags(windowflags)
+
     # Resize dock widget based on toolbar width
     panelDockWidget = slicer.util.findChild(slicer.util.mainWindow(), "PanelDockWidget")
     panelDockWidget.maximumWidth = self.ui.QReads.width
